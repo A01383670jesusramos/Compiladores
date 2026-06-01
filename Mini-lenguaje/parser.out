@@ -1,0 +1,2201 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    BODY
+    CALL
+    CORCH_A
+    CORCH_C
+    FUNC
+    LLAVE_A
+    LLAVE_C
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> PROGRAM ID DOS_PUNTOS vars func START body END
+Rule 2     func -> VOID ID PARENT_A parametros PARENT_C vars START body END
+Rule 3     func -> INT ID PARENT_A parametros PARENT_C vars START body END
+Rule 4     func -> FLOAT ID PARENT_A parametros PARENT_C vars START body END
+Rule 5     func -> empty
+Rule 6     parametros -> tipo ID mas_parametros
+Rule 7     parametros -> empty
+Rule 8     mas_parametros -> COMA tipo ID mas_parametros
+Rule 9     mas_parametros -> empty
+Rule 10    tipo -> INT
+Rule 11    tipo -> FLOAT
+Rule 12    vars -> var vars
+Rule 13    vars -> empty
+Rule 14    var -> VAR tipo lista_id PUNTO_COMA
+Rule 15    lista_id -> ID
+Rule 16    lista_id -> ID COMA lista_id
+Rule 17    body -> estatuto body
+Rule 18    body -> empty
+Rule 19    estatuto -> asigna
+Rule 20    estatuto -> condicion
+Rule 21    estatuto -> ciclo
+Rule 22    estatuto -> call
+Rule 23    estatuto -> print
+Rule 24    estatuto -> retorno
+Rule 25    asigna -> ID ASIGNA exp PUNTO_COMA
+Rule 26    condicion -> IF PARENT_A exp_relacion PARENT_C estatuto
+Rule 27    condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+Rule 28    ciclo -> WHILE PARENT_A exp_relacion PARENT_C body
+Rule 29    call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+Rule 30    print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA
+Rule 31    retorno -> RETURN exp PUNTO_COMA
+Rule 32    lista_exp -> exp mas_exp
+Rule 33    lista_exp -> empty
+Rule 34    mas_exp -> COMA exp mas_exp
+Rule 35    mas_exp -> empty
+Rule 36    exp -> termino sig_exp
+Rule 37    sig_exp -> MAS termino sig_exp
+Rule 38    sig_exp -> MENOS termino sig_exp
+Rule 39    sig_exp -> empty
+Rule 40    termino -> factor sig_termino
+Rule 41    sig_termino -> MULT factor sig_termino
+Rule 42    sig_termino -> DIV factor sig_termino
+Rule 43    sig_termino -> empty
+Rule 44    factor -> ID
+Rule 45    factor -> ID PARENT_A lista_exp PARENT_C
+Rule 46    factor -> CTE_INT
+Rule 47    factor -> CTE_FLOAT
+Rule 48    factor -> NULL
+Rule 49    factor -> PARENT_A exp PARENT_C
+Rule 50    factor -> MENOS factor
+Rule 51    exp_relacion -> exp op_relacion exp
+Rule 52    op_relacion -> IGUAL
+Rule 53    op_relacion -> NO_IGUAL
+Rule 54    op_relacion -> MENOR
+Rule 55    op_relacion -> MAYOR
+Rule 56    op_relacion -> MENOR_IGUAL
+Rule 57    op_relacion -> MAYOR_IGUAL
+Rule 58    empty -> <empty>
+
+Terminals, with rules where they appear
+
+ASIGNA               : 25
+BODY                 : 
+CALL                 : 
+COMA                 : 8 16 34
+CORCH_A              : 
+CORCH_C              : 
+CTE_FLOAT            : 47
+CTE_INT              : 46
+DIV                  : 42
+DOS_PUNTOS           : 1
+ELSE                 : 27
+END                  : 1 2 3 4
+FLOAT                : 4 11
+FUNC                 : 
+ID                   : 1 2 3 4 6 8 15 16 25 29 44 45
+IF                   : 26 27
+IGUAL                : 52
+INT                  : 3 10
+LLAVE_A              : 
+LLAVE_C              : 
+MAS                  : 37
+MAYOR                : 55
+MAYOR_IGUAL          : 57
+MENOR                : 54
+MENOR_IGUAL          : 56
+MENOS                : 38 50
+MULT                 : 41
+NO_IGUAL             : 53
+NULL                 : 48
+PARENT_A             : 2 3 4 26 27 28 29 30 45 49
+PARENT_C             : 2 3 4 26 27 28 29 30 45 49
+PRINT                : 30
+PROGRAM              : 1
+PUNTO_COMA           : 14 25 29 30 31
+RETURN               : 31
+START                : 1 2 3 4
+VAR                  : 14
+VOID                 : 2
+WHILE                : 28
+error                : 
+
+Nonterminals, with rules where they appear
+
+asigna               : 19
+body                 : 1 2 3 4 17 28
+call                 : 22
+ciclo                : 21
+condicion            : 20
+empty                : 5 7 9 13 18 33 35 39 43
+estatuto             : 17 26 27 27
+exp                  : 25 30 31 32 34 49 51 51
+exp_relacion         : 26 27 28
+factor               : 40 41 42 50
+func                 : 1
+lista_exp            : 29 45
+lista_id             : 14 16
+mas_exp              : 32 34
+mas_parametros       : 6 8
+op_relacion          : 51
+parametros           : 2 3 4
+print                : 23
+programa             : 0
+retorno              : 24
+sig_exp              : 36 37 38
+sig_termino          : 40 41 42
+termino              : 36 37 38
+tipo                 : 6 8 14
+var                  : 12
+vars                 : 1 2 3 4 12
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . PROGRAM ID DOS_PUNTOS vars func START body END
+
+    PROGRAM         shift and go to state 2
+
+    programa                       shift and go to state 1
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> PROGRAM . ID DOS_PUNTOS vars func START body END
+
+    ID              shift and go to state 3
+
+
+state 3
+
+    (1) programa -> PROGRAM ID . DOS_PUNTOS vars func START body END
+
+    DOS_PUNTOS      shift and go to state 4
+
+
+state 4
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS . vars func START body END
+    (12) vars -> . var vars
+    (13) vars -> . empty
+    (14) var -> . VAR tipo lista_id PUNTO_COMA
+    (58) empty -> .
+
+    VAR             shift and go to state 8
+    VOID            reduce using rule 58 (empty -> .)
+    INT             reduce using rule 58 (empty -> .)
+    FLOAT           reduce using rule 58 (empty -> .)
+    START           reduce using rule 58 (empty -> .)
+
+    vars                           shift and go to state 5
+    var                            shift and go to state 6
+    empty                          shift and go to state 7
+
+state 5
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS vars . func START body END
+    (2) func -> . VOID ID PARENT_A parametros PARENT_C vars START body END
+    (3) func -> . INT ID PARENT_A parametros PARENT_C vars START body END
+    (4) func -> . FLOAT ID PARENT_A parametros PARENT_C vars START body END
+    (5) func -> . empty
+    (58) empty -> .
+
+    VOID            shift and go to state 10
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 12
+    START           reduce using rule 58 (empty -> .)
+
+    func                           shift and go to state 9
+    empty                          shift and go to state 13
+
+state 6
+
+    (12) vars -> var . vars
+    (12) vars -> . var vars
+    (13) vars -> . empty
+    (14) var -> . VAR tipo lista_id PUNTO_COMA
+    (58) empty -> .
+
+    VAR             shift and go to state 8
+    VOID            reduce using rule 58 (empty -> .)
+    INT             reduce using rule 58 (empty -> .)
+    FLOAT           reduce using rule 58 (empty -> .)
+    START           reduce using rule 58 (empty -> .)
+
+    var                            shift and go to state 6
+    vars                           shift and go to state 14
+    empty                          shift and go to state 7
+
+state 7
+
+    (13) vars -> empty .
+
+    VOID            reduce using rule 13 (vars -> empty .)
+    INT             reduce using rule 13 (vars -> empty .)
+    FLOAT           reduce using rule 13 (vars -> empty .)
+    START           reduce using rule 13 (vars -> empty .)
+
+
+state 8
+
+    (14) var -> VAR . tipo lista_id PUNTO_COMA
+    (10) tipo -> . INT
+    (11) tipo -> . FLOAT
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+
+    tipo                           shift and go to state 15
+
+state 9
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS vars func . START body END
+
+    START           shift and go to state 18
+
+
+state 10
+
+    (2) func -> VOID . ID PARENT_A parametros PARENT_C vars START body END
+
+    ID              shift and go to state 19
+
+
+state 11
+
+    (3) func -> INT . ID PARENT_A parametros PARENT_C vars START body END
+
+    ID              shift and go to state 20
+
+
+state 12
+
+    (4) func -> FLOAT . ID PARENT_A parametros PARENT_C vars START body END
+
+    ID              shift and go to state 21
+
+
+state 13
+
+    (5) func -> empty .
+
+    START           reduce using rule 5 (func -> empty .)
+
+
+state 14
+
+    (12) vars -> var vars .
+
+    VOID            reduce using rule 12 (vars -> var vars .)
+    INT             reduce using rule 12 (vars -> var vars .)
+    FLOAT           reduce using rule 12 (vars -> var vars .)
+    START           reduce using rule 12 (vars -> var vars .)
+
+
+state 15
+
+    (14) var -> VAR tipo . lista_id PUNTO_COMA
+    (15) lista_id -> . ID
+    (16) lista_id -> . ID COMA lista_id
+
+    ID              shift and go to state 23
+
+    lista_id                       shift and go to state 22
+
+state 16
+
+    (10) tipo -> INT .
+
+    ID              reduce using rule 10 (tipo -> INT .)
+
+
+state 17
+
+    (11) tipo -> FLOAT .
+
+    ID              reduce using rule 11 (tipo -> FLOAT .)
+
+
+state 18
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS vars func START . body END
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    END             reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    body                           shift and go to state 25
+    estatuto                       shift and go to state 26
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 19
+
+    (2) func -> VOID ID . PARENT_A parametros PARENT_C vars START body END
+
+    PARENT_A        shift and go to state 38
+
+
+state 20
+
+    (3) func -> INT ID . PARENT_A parametros PARENT_C vars START body END
+
+    PARENT_A        shift and go to state 39
+
+
+state 21
+
+    (4) func -> FLOAT ID . PARENT_A parametros PARENT_C vars START body END
+
+    PARENT_A        shift and go to state 40
+
+
+state 22
+
+    (14) var -> VAR tipo lista_id . PUNTO_COMA
+
+    PUNTO_COMA      shift and go to state 41
+
+
+state 23
+
+    (15) lista_id -> ID .
+    (16) lista_id -> ID . COMA lista_id
+
+    PUNTO_COMA      reduce using rule 15 (lista_id -> ID .)
+    COMA            shift and go to state 42
+
+
+state 24
+
+    (25) asigna -> ID . ASIGNA exp PUNTO_COMA
+    (29) call -> ID . PARENT_A lista_exp PARENT_C PUNTO_COMA
+
+    ASIGNA          shift and go to state 43
+    PARENT_A        shift and go to state 44
+
+
+state 25
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS vars func START body . END
+
+    END             shift and go to state 45
+
+
+state 26
+
+    (17) body -> estatuto . body
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for PRINT resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    END             reduce using rule 58 (empty -> .)
+    ELSE            reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+  ! ID              [ reduce using rule 58 (empty -> .) ]
+  ! IF              [ reduce using rule 58 (empty -> .) ]
+  ! WHILE           [ reduce using rule 58 (empty -> .) ]
+  ! PRINT           [ reduce using rule 58 (empty -> .) ]
+  ! RETURN          [ reduce using rule 58 (empty -> .) ]
+
+    estatuto                       shift and go to state 26
+    body                           shift and go to state 46
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 27
+
+    (18) body -> empty .
+
+    END             reduce using rule 18 (body -> empty .)
+    ID              reduce using rule 18 (body -> empty .)
+    IF              reduce using rule 18 (body -> empty .)
+    WHILE           reduce using rule 18 (body -> empty .)
+    PRINT           reduce using rule 18 (body -> empty .)
+    RETURN          reduce using rule 18 (body -> empty .)
+    ELSE            reduce using rule 18 (body -> empty .)
+
+
+state 28
+
+    (19) estatuto -> asigna .
+
+    ID              reduce using rule 19 (estatuto -> asigna .)
+    IF              reduce using rule 19 (estatuto -> asigna .)
+    WHILE           reduce using rule 19 (estatuto -> asigna .)
+    PRINT           reduce using rule 19 (estatuto -> asigna .)
+    RETURN          reduce using rule 19 (estatuto -> asigna .)
+    END             reduce using rule 19 (estatuto -> asigna .)
+    ELSE            reduce using rule 19 (estatuto -> asigna .)
+
+
+state 29
+
+    (20) estatuto -> condicion .
+
+    ID              reduce using rule 20 (estatuto -> condicion .)
+    IF              reduce using rule 20 (estatuto -> condicion .)
+    WHILE           reduce using rule 20 (estatuto -> condicion .)
+    PRINT           reduce using rule 20 (estatuto -> condicion .)
+    RETURN          reduce using rule 20 (estatuto -> condicion .)
+    END             reduce using rule 20 (estatuto -> condicion .)
+    ELSE            reduce using rule 20 (estatuto -> condicion .)
+
+
+state 30
+
+    (21) estatuto -> ciclo .
+
+    ID              reduce using rule 21 (estatuto -> ciclo .)
+    IF              reduce using rule 21 (estatuto -> ciclo .)
+    WHILE           reduce using rule 21 (estatuto -> ciclo .)
+    PRINT           reduce using rule 21 (estatuto -> ciclo .)
+    RETURN          reduce using rule 21 (estatuto -> ciclo .)
+    END             reduce using rule 21 (estatuto -> ciclo .)
+    ELSE            reduce using rule 21 (estatuto -> ciclo .)
+
+
+state 31
+
+    (22) estatuto -> call .
+
+    ID              reduce using rule 22 (estatuto -> call .)
+    IF              reduce using rule 22 (estatuto -> call .)
+    WHILE           reduce using rule 22 (estatuto -> call .)
+    PRINT           reduce using rule 22 (estatuto -> call .)
+    RETURN          reduce using rule 22 (estatuto -> call .)
+    END             reduce using rule 22 (estatuto -> call .)
+    ELSE            reduce using rule 22 (estatuto -> call .)
+
+
+state 32
+
+    (23) estatuto -> print .
+
+    ID              reduce using rule 23 (estatuto -> print .)
+    IF              reduce using rule 23 (estatuto -> print .)
+    WHILE           reduce using rule 23 (estatuto -> print .)
+    PRINT           reduce using rule 23 (estatuto -> print .)
+    RETURN          reduce using rule 23 (estatuto -> print .)
+    END             reduce using rule 23 (estatuto -> print .)
+    ELSE            reduce using rule 23 (estatuto -> print .)
+
+
+state 33
+
+    (24) estatuto -> retorno .
+
+    ID              reduce using rule 24 (estatuto -> retorno .)
+    IF              reduce using rule 24 (estatuto -> retorno .)
+    WHILE           reduce using rule 24 (estatuto -> retorno .)
+    PRINT           reduce using rule 24 (estatuto -> retorno .)
+    RETURN          reduce using rule 24 (estatuto -> retorno .)
+    END             reduce using rule 24 (estatuto -> retorno .)
+    ELSE            reduce using rule 24 (estatuto -> retorno .)
+
+
+state 34
+
+    (26) condicion -> IF . PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> IF . PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+
+    PARENT_A        shift and go to state 47
+
+
+state 35
+
+    (28) ciclo -> WHILE . PARENT_A exp_relacion PARENT_C body
+
+    PARENT_A        shift and go to state 48
+
+
+state 36
+
+    (30) print -> PRINT . PARENT_A exp PARENT_C PUNTO_COMA
+
+    PARENT_A        shift and go to state 49
+
+
+state 37
+
+    (31) retorno -> RETURN . exp PUNTO_COMA
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 50
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 38
+
+    (2) func -> VOID ID PARENT_A . parametros PARENT_C vars START body END
+    (6) parametros -> . tipo ID mas_parametros
+    (7) parametros -> . empty
+    (10) tipo -> . INT
+    (11) tipo -> . FLOAT
+    (58) empty -> .
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    parametros                     shift and go to state 59
+    tipo                           shift and go to state 60
+    empty                          shift and go to state 61
+
+state 39
+
+    (3) func -> INT ID PARENT_A . parametros PARENT_C vars START body END
+    (6) parametros -> . tipo ID mas_parametros
+    (7) parametros -> . empty
+    (10) tipo -> . INT
+    (11) tipo -> . FLOAT
+    (58) empty -> .
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    parametros                     shift and go to state 62
+    tipo                           shift and go to state 60
+    empty                          shift and go to state 61
+
+state 40
+
+    (4) func -> FLOAT ID PARENT_A . parametros PARENT_C vars START body END
+    (6) parametros -> . tipo ID mas_parametros
+    (7) parametros -> . empty
+    (10) tipo -> . INT
+    (11) tipo -> . FLOAT
+    (58) empty -> .
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    parametros                     shift and go to state 63
+    tipo                           shift and go to state 60
+    empty                          shift and go to state 61
+
+state 41
+
+    (14) var -> VAR tipo lista_id PUNTO_COMA .
+
+    VAR             reduce using rule 14 (var -> VAR tipo lista_id PUNTO_COMA .)
+    VOID            reduce using rule 14 (var -> VAR tipo lista_id PUNTO_COMA .)
+    INT             reduce using rule 14 (var -> VAR tipo lista_id PUNTO_COMA .)
+    FLOAT           reduce using rule 14 (var -> VAR tipo lista_id PUNTO_COMA .)
+    START           reduce using rule 14 (var -> VAR tipo lista_id PUNTO_COMA .)
+
+
+state 42
+
+    (16) lista_id -> ID COMA . lista_id
+    (15) lista_id -> . ID
+    (16) lista_id -> . ID COMA lista_id
+
+    ID              shift and go to state 23
+
+    lista_id                       shift and go to state 64
+
+state 43
+
+    (25) asigna -> ID ASIGNA . exp PUNTO_COMA
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 65
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 44
+
+    (29) call -> ID PARENT_A . lista_exp PARENT_C PUNTO_COMA
+    (32) lista_exp -> . exp mas_exp
+    (33) lista_exp -> . empty
+    (36) exp -> . termino sig_exp
+    (58) empty -> .
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    PARENT_C        reduce using rule 58 (empty -> .)
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    lista_exp                      shift and go to state 66
+    exp                            shift and go to state 67
+    empty                          shift and go to state 68
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 45
+
+    (1) programa -> PROGRAM ID DOS_PUNTOS vars func START body END .
+
+    $end            reduce using rule 1 (programa -> PROGRAM ID DOS_PUNTOS vars func START body END .)
+
+
+state 46
+
+    (17) body -> estatuto body .
+
+    END             reduce using rule 17 (body -> estatuto body .)
+    ID              reduce using rule 17 (body -> estatuto body .)
+    IF              reduce using rule 17 (body -> estatuto body .)
+    WHILE           reduce using rule 17 (body -> estatuto body .)
+    PRINT           reduce using rule 17 (body -> estatuto body .)
+    RETURN          reduce using rule 17 (body -> estatuto body .)
+    ELSE            reduce using rule 17 (body -> estatuto body .)
+
+
+state 47
+
+    (26) condicion -> IF PARENT_A . exp_relacion PARENT_C estatuto
+    (27) condicion -> IF PARENT_A . exp_relacion PARENT_C estatuto ELSE estatuto
+    (51) exp_relacion -> . exp op_relacion exp
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp_relacion                   shift and go to state 69
+    exp                            shift and go to state 70
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 48
+
+    (28) ciclo -> WHILE PARENT_A . exp_relacion PARENT_C body
+    (51) exp_relacion -> . exp op_relacion exp
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp_relacion                   shift and go to state 71
+    exp                            shift and go to state 70
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 49
+
+    (30) print -> PRINT PARENT_A . exp PARENT_C PUNTO_COMA
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 72
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 50
+
+    (31) retorno -> RETURN exp . PUNTO_COMA
+
+    PUNTO_COMA      shift and go to state 73
+
+
+state 51
+
+    (36) exp -> termino . sig_exp
+    (37) sig_exp -> . MAS termino sig_exp
+    (38) sig_exp -> . MENOS termino sig_exp
+    (39) sig_exp -> . empty
+    (58) empty -> .
+
+    MAS             shift and go to state 75
+    MENOS           shift and go to state 76
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_exp                        shift and go to state 74
+    empty                          shift and go to state 77
+
+state 52
+
+    (40) termino -> factor . sig_termino
+    (41) sig_termino -> . MULT factor sig_termino
+    (42) sig_termino -> . DIV factor sig_termino
+    (43) sig_termino -> . empty
+    (58) empty -> .
+
+    MULT            shift and go to state 79
+    DIV             shift and go to state 80
+    MAS             reduce using rule 58 (empty -> .)
+    MENOS           reduce using rule 58 (empty -> .)
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_termino                    shift and go to state 78
+    empty                          shift and go to state 81
+
+state 53
+
+    (44) factor -> ID .
+    (45) factor -> ID . PARENT_A lista_exp PARENT_C
+
+    MULT            reduce using rule 44 (factor -> ID .)
+    DIV             reduce using rule 44 (factor -> ID .)
+    MAS             reduce using rule 44 (factor -> ID .)
+    MENOS           reduce using rule 44 (factor -> ID .)
+    PUNTO_COMA      reduce using rule 44 (factor -> ID .)
+    COMA            reduce using rule 44 (factor -> ID .)
+    PARENT_C        reduce using rule 44 (factor -> ID .)
+    IGUAL           reduce using rule 44 (factor -> ID .)
+    NO_IGUAL        reduce using rule 44 (factor -> ID .)
+    MENOR           reduce using rule 44 (factor -> ID .)
+    MAYOR           reduce using rule 44 (factor -> ID .)
+    MENOR_IGUAL     reduce using rule 44 (factor -> ID .)
+    MAYOR_IGUAL     reduce using rule 44 (factor -> ID .)
+    PARENT_A        shift and go to state 82
+
+
+state 54
+
+    (49) factor -> PARENT_A . exp PARENT_C
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 83
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 55
+
+    (46) factor -> CTE_INT .
+
+    MULT            reduce using rule 46 (factor -> CTE_INT .)
+    DIV             reduce using rule 46 (factor -> CTE_INT .)
+    MAS             reduce using rule 46 (factor -> CTE_INT .)
+    MENOS           reduce using rule 46 (factor -> CTE_INT .)
+    PUNTO_COMA      reduce using rule 46 (factor -> CTE_INT .)
+    COMA            reduce using rule 46 (factor -> CTE_INT .)
+    PARENT_C        reduce using rule 46 (factor -> CTE_INT .)
+    IGUAL           reduce using rule 46 (factor -> CTE_INT .)
+    NO_IGUAL        reduce using rule 46 (factor -> CTE_INT .)
+    MENOR           reduce using rule 46 (factor -> CTE_INT .)
+    MAYOR           reduce using rule 46 (factor -> CTE_INT .)
+    MENOR_IGUAL     reduce using rule 46 (factor -> CTE_INT .)
+    MAYOR_IGUAL     reduce using rule 46 (factor -> CTE_INT .)
+
+
+state 56
+
+    (47) factor -> CTE_FLOAT .
+
+    MULT            reduce using rule 47 (factor -> CTE_FLOAT .)
+    DIV             reduce using rule 47 (factor -> CTE_FLOAT .)
+    MAS             reduce using rule 47 (factor -> CTE_FLOAT .)
+    MENOS           reduce using rule 47 (factor -> CTE_FLOAT .)
+    PUNTO_COMA      reduce using rule 47 (factor -> CTE_FLOAT .)
+    COMA            reduce using rule 47 (factor -> CTE_FLOAT .)
+    PARENT_C        reduce using rule 47 (factor -> CTE_FLOAT .)
+    IGUAL           reduce using rule 47 (factor -> CTE_FLOAT .)
+    NO_IGUAL        reduce using rule 47 (factor -> CTE_FLOAT .)
+    MENOR           reduce using rule 47 (factor -> CTE_FLOAT .)
+    MAYOR           reduce using rule 47 (factor -> CTE_FLOAT .)
+    MENOR_IGUAL     reduce using rule 47 (factor -> CTE_FLOAT .)
+    MAYOR_IGUAL     reduce using rule 47 (factor -> CTE_FLOAT .)
+
+
+state 57
+
+    (48) factor -> NULL .
+
+    MULT            reduce using rule 48 (factor -> NULL .)
+    DIV             reduce using rule 48 (factor -> NULL .)
+    MAS             reduce using rule 48 (factor -> NULL .)
+    MENOS           reduce using rule 48 (factor -> NULL .)
+    PUNTO_COMA      reduce using rule 48 (factor -> NULL .)
+    COMA            reduce using rule 48 (factor -> NULL .)
+    PARENT_C        reduce using rule 48 (factor -> NULL .)
+    IGUAL           reduce using rule 48 (factor -> NULL .)
+    NO_IGUAL        reduce using rule 48 (factor -> NULL .)
+    MENOR           reduce using rule 48 (factor -> NULL .)
+    MAYOR           reduce using rule 48 (factor -> NULL .)
+    MENOR_IGUAL     reduce using rule 48 (factor -> NULL .)
+    MAYOR_IGUAL     reduce using rule 48 (factor -> NULL .)
+
+
+state 58
+
+    (50) factor -> MENOS . factor
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    factor                         shift and go to state 84
+
+state 59
+
+    (2) func -> VOID ID PARENT_A parametros . PARENT_C vars START body END
+
+    PARENT_C        shift and go to state 85
+
+
+state 60
+
+    (6) parametros -> tipo . ID mas_parametros
+
+    ID              shift and go to state 86
+
+
+state 61
+
+    (7) parametros -> empty .
+
+    PARENT_C        reduce using rule 7 (parametros -> empty .)
+
+
+state 62
+
+    (3) func -> INT ID PARENT_A parametros . PARENT_C vars START body END
+
+    PARENT_C        shift and go to state 87
+
+
+state 63
+
+    (4) func -> FLOAT ID PARENT_A parametros . PARENT_C vars START body END
+
+    PARENT_C        shift and go to state 88
+
+
+state 64
+
+    (16) lista_id -> ID COMA lista_id .
+
+    PUNTO_COMA      reduce using rule 16 (lista_id -> ID COMA lista_id .)
+
+
+state 65
+
+    (25) asigna -> ID ASIGNA exp . PUNTO_COMA
+
+    PUNTO_COMA      shift and go to state 89
+
+
+state 66
+
+    (29) call -> ID PARENT_A lista_exp . PARENT_C PUNTO_COMA
+
+    PARENT_C        shift and go to state 90
+
+
+state 67
+
+    (32) lista_exp -> exp . mas_exp
+    (34) mas_exp -> . COMA exp mas_exp
+    (35) mas_exp -> . empty
+    (58) empty -> .
+
+    COMA            shift and go to state 92
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    mas_exp                        shift and go to state 91
+    empty                          shift and go to state 93
+
+state 68
+
+    (33) lista_exp -> empty .
+
+    PARENT_C        reduce using rule 33 (lista_exp -> empty .)
+
+
+state 69
+
+    (26) condicion -> IF PARENT_A exp_relacion . PARENT_C estatuto
+    (27) condicion -> IF PARENT_A exp_relacion . PARENT_C estatuto ELSE estatuto
+
+    PARENT_C        shift and go to state 94
+
+
+state 70
+
+    (51) exp_relacion -> exp . op_relacion exp
+    (52) op_relacion -> . IGUAL
+    (53) op_relacion -> . NO_IGUAL
+    (54) op_relacion -> . MENOR
+    (55) op_relacion -> . MAYOR
+    (56) op_relacion -> . MENOR_IGUAL
+    (57) op_relacion -> . MAYOR_IGUAL
+
+    IGUAL           shift and go to state 96
+    NO_IGUAL        shift and go to state 97
+    MENOR           shift and go to state 98
+    MAYOR           shift and go to state 99
+    MENOR_IGUAL     shift and go to state 100
+    MAYOR_IGUAL     shift and go to state 101
+
+    op_relacion                    shift and go to state 95
+
+state 71
+
+    (28) ciclo -> WHILE PARENT_A exp_relacion . PARENT_C body
+
+    PARENT_C        shift and go to state 102
+
+
+state 72
+
+    (30) print -> PRINT PARENT_A exp . PARENT_C PUNTO_COMA
+
+    PARENT_C        shift and go to state 103
+
+
+state 73
+
+    (31) retorno -> RETURN exp PUNTO_COMA .
+
+    ID              reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    IF              reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    WHILE           reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    PRINT           reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    RETURN          reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    END             reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+    ELSE            reduce using rule 31 (retorno -> RETURN exp PUNTO_COMA .)
+
+
+state 74
+
+    (36) exp -> termino sig_exp .
+
+    PUNTO_COMA      reduce using rule 36 (exp -> termino sig_exp .)
+    COMA            reduce using rule 36 (exp -> termino sig_exp .)
+    PARENT_C        reduce using rule 36 (exp -> termino sig_exp .)
+    IGUAL           reduce using rule 36 (exp -> termino sig_exp .)
+    NO_IGUAL        reduce using rule 36 (exp -> termino sig_exp .)
+    MENOR           reduce using rule 36 (exp -> termino sig_exp .)
+    MAYOR           reduce using rule 36 (exp -> termino sig_exp .)
+    MENOR_IGUAL     reduce using rule 36 (exp -> termino sig_exp .)
+    MAYOR_IGUAL     reduce using rule 36 (exp -> termino sig_exp .)
+
+
+state 75
+
+    (37) sig_exp -> MAS . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    termino                        shift and go to state 104
+    factor                         shift and go to state 52
+
+state 76
+
+    (38) sig_exp -> MENOS . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    termino                        shift and go to state 105
+    factor                         shift and go to state 52
+
+state 77
+
+    (39) sig_exp -> empty .
+
+    PUNTO_COMA      reduce using rule 39 (sig_exp -> empty .)
+    COMA            reduce using rule 39 (sig_exp -> empty .)
+    PARENT_C        reduce using rule 39 (sig_exp -> empty .)
+    IGUAL           reduce using rule 39 (sig_exp -> empty .)
+    NO_IGUAL        reduce using rule 39 (sig_exp -> empty .)
+    MENOR           reduce using rule 39 (sig_exp -> empty .)
+    MAYOR           reduce using rule 39 (sig_exp -> empty .)
+    MENOR_IGUAL     reduce using rule 39 (sig_exp -> empty .)
+    MAYOR_IGUAL     reduce using rule 39 (sig_exp -> empty .)
+
+
+state 78
+
+    (40) termino -> factor sig_termino .
+
+    MAS             reduce using rule 40 (termino -> factor sig_termino .)
+    MENOS           reduce using rule 40 (termino -> factor sig_termino .)
+    PUNTO_COMA      reduce using rule 40 (termino -> factor sig_termino .)
+    COMA            reduce using rule 40 (termino -> factor sig_termino .)
+    PARENT_C        reduce using rule 40 (termino -> factor sig_termino .)
+    IGUAL           reduce using rule 40 (termino -> factor sig_termino .)
+    NO_IGUAL        reduce using rule 40 (termino -> factor sig_termino .)
+    MENOR           reduce using rule 40 (termino -> factor sig_termino .)
+    MAYOR           reduce using rule 40 (termino -> factor sig_termino .)
+    MENOR_IGUAL     reduce using rule 40 (termino -> factor sig_termino .)
+    MAYOR_IGUAL     reduce using rule 40 (termino -> factor sig_termino .)
+
+
+state 79
+
+    (41) sig_termino -> MULT . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    factor                         shift and go to state 106
+
+state 80
+
+    (42) sig_termino -> DIV . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    factor                         shift and go to state 107
+
+state 81
+
+    (43) sig_termino -> empty .
+
+    MAS             reduce using rule 43 (sig_termino -> empty .)
+    MENOS           reduce using rule 43 (sig_termino -> empty .)
+    PUNTO_COMA      reduce using rule 43 (sig_termino -> empty .)
+    COMA            reduce using rule 43 (sig_termino -> empty .)
+    PARENT_C        reduce using rule 43 (sig_termino -> empty .)
+    IGUAL           reduce using rule 43 (sig_termino -> empty .)
+    NO_IGUAL        reduce using rule 43 (sig_termino -> empty .)
+    MENOR           reduce using rule 43 (sig_termino -> empty .)
+    MAYOR           reduce using rule 43 (sig_termino -> empty .)
+    MENOR_IGUAL     reduce using rule 43 (sig_termino -> empty .)
+    MAYOR_IGUAL     reduce using rule 43 (sig_termino -> empty .)
+
+
+state 82
+
+    (45) factor -> ID PARENT_A . lista_exp PARENT_C
+    (32) lista_exp -> . exp mas_exp
+    (33) lista_exp -> . empty
+    (36) exp -> . termino sig_exp
+    (58) empty -> .
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    PARENT_C        reduce using rule 58 (empty -> .)
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    lista_exp                      shift and go to state 108
+    exp                            shift and go to state 67
+    empty                          shift and go to state 68
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 83
+
+    (49) factor -> PARENT_A exp . PARENT_C
+
+    PARENT_C        shift and go to state 109
+
+
+state 84
+
+    (50) factor -> MENOS factor .
+
+    MULT            reduce using rule 50 (factor -> MENOS factor .)
+    DIV             reduce using rule 50 (factor -> MENOS factor .)
+    MAS             reduce using rule 50 (factor -> MENOS factor .)
+    MENOS           reduce using rule 50 (factor -> MENOS factor .)
+    PUNTO_COMA      reduce using rule 50 (factor -> MENOS factor .)
+    COMA            reduce using rule 50 (factor -> MENOS factor .)
+    PARENT_C        reduce using rule 50 (factor -> MENOS factor .)
+    IGUAL           reduce using rule 50 (factor -> MENOS factor .)
+    NO_IGUAL        reduce using rule 50 (factor -> MENOS factor .)
+    MENOR           reduce using rule 50 (factor -> MENOS factor .)
+    MAYOR           reduce using rule 50 (factor -> MENOS factor .)
+    MENOR_IGUAL     reduce using rule 50 (factor -> MENOS factor .)
+    MAYOR_IGUAL     reduce using rule 50 (factor -> MENOS factor .)
+
+
+state 85
+
+    (2) func -> VOID ID PARENT_A parametros PARENT_C . vars START body END
+    (12) vars -> . var vars
+    (13) vars -> . empty
+    (14) var -> . VAR tipo lista_id PUNTO_COMA
+    (58) empty -> .
+
+    VAR             shift and go to state 8
+    START           reduce using rule 58 (empty -> .)
+
+    vars                           shift and go to state 110
+    var                            shift and go to state 6
+    empty                          shift and go to state 7
+
+state 86
+
+    (6) parametros -> tipo ID . mas_parametros
+    (8) mas_parametros -> . COMA tipo ID mas_parametros
+    (9) mas_parametros -> . empty
+    (58) empty -> .
+
+    COMA            shift and go to state 112
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    mas_parametros                 shift and go to state 111
+    empty                          shift and go to state 113
+
+state 87
+
+    (3) func -> INT ID PARENT_A parametros PARENT_C . vars START body END
+    (12) vars -> . var vars
+    (13) vars -> . empty
+    (14) var -> . VAR tipo lista_id PUNTO_COMA
+    (58) empty -> .
+
+    VAR             shift and go to state 8
+    START           reduce using rule 58 (empty -> .)
+
+    vars                           shift and go to state 114
+    var                            shift and go to state 6
+    empty                          shift and go to state 7
+
+state 88
+
+    (4) func -> FLOAT ID PARENT_A parametros PARENT_C . vars START body END
+    (12) vars -> . var vars
+    (13) vars -> . empty
+    (14) var -> . VAR tipo lista_id PUNTO_COMA
+    (58) empty -> .
+
+    VAR             shift and go to state 8
+    START           reduce using rule 58 (empty -> .)
+
+    vars                           shift and go to state 115
+    var                            shift and go to state 6
+    empty                          shift and go to state 7
+
+state 89
+
+    (25) asigna -> ID ASIGNA exp PUNTO_COMA .
+
+    ID              reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    IF              reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    WHILE           reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    PRINT           reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    RETURN          reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    END             reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    ELSE            reduce using rule 25 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+
+
+state 90
+
+    (29) call -> ID PARENT_A lista_exp PARENT_C . PUNTO_COMA
+
+    PUNTO_COMA      shift and go to state 116
+
+
+state 91
+
+    (32) lista_exp -> exp mas_exp .
+
+    PARENT_C        reduce using rule 32 (lista_exp -> exp mas_exp .)
+
+
+state 92
+
+    (34) mas_exp -> COMA . exp mas_exp
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 117
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 93
+
+    (35) mas_exp -> empty .
+
+    PARENT_C        reduce using rule 35 (mas_exp -> empty .)
+
+
+state 94
+
+    (26) condicion -> IF PARENT_A exp_relacion PARENT_C . estatuto
+    (27) condicion -> IF PARENT_A exp_relacion PARENT_C . estatuto ELSE estatuto
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    estatuto                       shift and go to state 118
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 95
+
+    (51) exp_relacion -> exp op_relacion . exp
+    (36) exp -> . termino sig_exp
+    (40) termino -> . factor sig_termino
+    (44) factor -> . ID
+    (45) factor -> . ID PARENT_A lista_exp PARENT_C
+    (46) factor -> . CTE_INT
+    (47) factor -> . CTE_FLOAT
+    (48) factor -> . NULL
+    (49) factor -> . PARENT_A exp PARENT_C
+    (50) factor -> . MENOS factor
+
+    ID              shift and go to state 53
+    CTE_INT         shift and go to state 55
+    CTE_FLOAT       shift and go to state 56
+    NULL            shift and go to state 57
+    PARENT_A        shift and go to state 54
+    MENOS           shift and go to state 58
+
+    exp                            shift and go to state 119
+    termino                        shift and go to state 51
+    factor                         shift and go to state 52
+
+state 96
+
+    (52) op_relacion -> IGUAL .
+
+    ID              reduce using rule 52 (op_relacion -> IGUAL .)
+    CTE_INT         reduce using rule 52 (op_relacion -> IGUAL .)
+    CTE_FLOAT       reduce using rule 52 (op_relacion -> IGUAL .)
+    NULL            reduce using rule 52 (op_relacion -> IGUAL .)
+    PARENT_A        reduce using rule 52 (op_relacion -> IGUAL .)
+    MENOS           reduce using rule 52 (op_relacion -> IGUAL .)
+
+
+state 97
+
+    (53) op_relacion -> NO_IGUAL .
+
+    ID              reduce using rule 53 (op_relacion -> NO_IGUAL .)
+    CTE_INT         reduce using rule 53 (op_relacion -> NO_IGUAL .)
+    CTE_FLOAT       reduce using rule 53 (op_relacion -> NO_IGUAL .)
+    NULL            reduce using rule 53 (op_relacion -> NO_IGUAL .)
+    PARENT_A        reduce using rule 53 (op_relacion -> NO_IGUAL .)
+    MENOS           reduce using rule 53 (op_relacion -> NO_IGUAL .)
+
+
+state 98
+
+    (54) op_relacion -> MENOR .
+
+    ID              reduce using rule 54 (op_relacion -> MENOR .)
+    CTE_INT         reduce using rule 54 (op_relacion -> MENOR .)
+    CTE_FLOAT       reduce using rule 54 (op_relacion -> MENOR .)
+    NULL            reduce using rule 54 (op_relacion -> MENOR .)
+    PARENT_A        reduce using rule 54 (op_relacion -> MENOR .)
+    MENOS           reduce using rule 54 (op_relacion -> MENOR .)
+
+
+state 99
+
+    (55) op_relacion -> MAYOR .
+
+    ID              reduce using rule 55 (op_relacion -> MAYOR .)
+    CTE_INT         reduce using rule 55 (op_relacion -> MAYOR .)
+    CTE_FLOAT       reduce using rule 55 (op_relacion -> MAYOR .)
+    NULL            reduce using rule 55 (op_relacion -> MAYOR .)
+    PARENT_A        reduce using rule 55 (op_relacion -> MAYOR .)
+    MENOS           reduce using rule 55 (op_relacion -> MAYOR .)
+
+
+state 100
+
+    (56) op_relacion -> MENOR_IGUAL .
+
+    ID              reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+    CTE_INT         reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+    CTE_FLOAT       reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+    NULL            reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+    PARENT_A        reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+    MENOS           reduce using rule 56 (op_relacion -> MENOR_IGUAL .)
+
+
+state 101
+
+    (57) op_relacion -> MAYOR_IGUAL .
+
+    ID              reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+    CTE_INT         reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+    CTE_FLOAT       reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+    NULL            reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+    PARENT_A        reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+    MENOS           reduce using rule 57 (op_relacion -> MAYOR_IGUAL .)
+
+
+state 102
+
+    (28) ciclo -> WHILE PARENT_A exp_relacion PARENT_C . body
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for IF resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for PRINT resolved as shift
+  ! shift/reduce conflict for RETURN resolved as shift
+    END             reduce using rule 58 (empty -> .)
+    ELSE            reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+  ! ID              [ reduce using rule 58 (empty -> .) ]
+  ! IF              [ reduce using rule 58 (empty -> .) ]
+  ! WHILE           [ reduce using rule 58 (empty -> .) ]
+  ! PRINT           [ reduce using rule 58 (empty -> .) ]
+  ! RETURN          [ reduce using rule 58 (empty -> .) ]
+
+    body                           shift and go to state 120
+    estatuto                       shift and go to state 26
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 103
+
+    (30) print -> PRINT PARENT_A exp PARENT_C . PUNTO_COMA
+
+    PUNTO_COMA      shift and go to state 121
+
+
+state 104
+
+    (37) sig_exp -> MAS termino . sig_exp
+    (37) sig_exp -> . MAS termino sig_exp
+    (38) sig_exp -> . MENOS termino sig_exp
+    (39) sig_exp -> . empty
+    (58) empty -> .
+
+    MAS             shift and go to state 75
+    MENOS           shift and go to state 76
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_exp                        shift and go to state 122
+    empty                          shift and go to state 77
+
+state 105
+
+    (38) sig_exp -> MENOS termino . sig_exp
+    (37) sig_exp -> . MAS termino sig_exp
+    (38) sig_exp -> . MENOS termino sig_exp
+    (39) sig_exp -> . empty
+    (58) empty -> .
+
+    MAS             shift and go to state 75
+    MENOS           shift and go to state 76
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_exp                        shift and go to state 123
+    empty                          shift and go to state 77
+
+state 106
+
+    (41) sig_termino -> MULT factor . sig_termino
+    (41) sig_termino -> . MULT factor sig_termino
+    (42) sig_termino -> . DIV factor sig_termino
+    (43) sig_termino -> . empty
+    (58) empty -> .
+
+    MULT            shift and go to state 79
+    DIV             shift and go to state 80
+    MAS             reduce using rule 58 (empty -> .)
+    MENOS           reduce using rule 58 (empty -> .)
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_termino                    shift and go to state 124
+    empty                          shift and go to state 81
+
+state 107
+
+    (42) sig_termino -> DIV factor . sig_termino
+    (41) sig_termino -> . MULT factor sig_termino
+    (42) sig_termino -> . DIV factor sig_termino
+    (43) sig_termino -> . empty
+    (58) empty -> .
+
+    MULT            shift and go to state 79
+    DIV             shift and go to state 80
+    MAS             reduce using rule 58 (empty -> .)
+    MENOS           reduce using rule 58 (empty -> .)
+    PUNTO_COMA      reduce using rule 58 (empty -> .)
+    COMA            reduce using rule 58 (empty -> .)
+    PARENT_C        reduce using rule 58 (empty -> .)
+    IGUAL           reduce using rule 58 (empty -> .)
+    NO_IGUAL        reduce using rule 58 (empty -> .)
+    MENOR           reduce using rule 58 (empty -> .)
+    MAYOR           reduce using rule 58 (empty -> .)
+    MENOR_IGUAL     reduce using rule 58 (empty -> .)
+    MAYOR_IGUAL     reduce using rule 58 (empty -> .)
+
+    sig_termino                    shift and go to state 125
+    empty                          shift and go to state 81
+
+state 108
+
+    (45) factor -> ID PARENT_A lista_exp . PARENT_C
+
+    PARENT_C        shift and go to state 126
+
+
+state 109
+
+    (49) factor -> PARENT_A exp PARENT_C .
+
+    MULT            reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    DIV             reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MAS             reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MENOS           reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    PUNTO_COMA      reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    COMA            reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    PARENT_C        reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    IGUAL           reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    NO_IGUAL        reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MENOR           reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MAYOR           reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MENOR_IGUAL     reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+    MAYOR_IGUAL     reduce using rule 49 (factor -> PARENT_A exp PARENT_C .)
+
+
+state 110
+
+    (2) func -> VOID ID PARENT_A parametros PARENT_C vars . START body END
+
+    START           shift and go to state 127
+
+
+state 111
+
+    (6) parametros -> tipo ID mas_parametros .
+
+    PARENT_C        reduce using rule 6 (parametros -> tipo ID mas_parametros .)
+
+
+state 112
+
+    (8) mas_parametros -> COMA . tipo ID mas_parametros
+    (10) tipo -> . INT
+    (11) tipo -> . FLOAT
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+
+    tipo                           shift and go to state 128
+
+state 113
+
+    (9) mas_parametros -> empty .
+
+    PARENT_C        reduce using rule 9 (mas_parametros -> empty .)
+
+
+state 114
+
+    (3) func -> INT ID PARENT_A parametros PARENT_C vars . START body END
+
+    START           shift and go to state 129
+
+
+state 115
+
+    (4) func -> FLOAT ID PARENT_A parametros PARENT_C vars . START body END
+
+    START           shift and go to state 130
+
+
+state 116
+
+    (29) call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .
+
+    ID              reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    IF              reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    WHILE           reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    PRINT           reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    RETURN          reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    END             reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    ELSE            reduce using rule 29 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+
+
+state 117
+
+    (34) mas_exp -> COMA exp . mas_exp
+    (34) mas_exp -> . COMA exp mas_exp
+    (35) mas_exp -> . empty
+    (58) empty -> .
+
+    COMA            shift and go to state 92
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    mas_exp                        shift and go to state 131
+    empty                          shift and go to state 93
+
+state 118
+
+    (26) condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .
+    (27) condicion -> IF PARENT_A exp_relacion PARENT_C estatuto . ELSE estatuto
+
+  ! shift/reduce conflict for ELSE resolved as shift
+    ID              reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    IF              reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    WHILE           reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    PRINT           reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    RETURN          reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    END             reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .)
+    ELSE            shift and go to state 132
+
+  ! ELSE            [ reduce using rule 26 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto .) ]
+
+
+state 119
+
+    (51) exp_relacion -> exp op_relacion exp .
+
+    PARENT_C        reduce using rule 51 (exp_relacion -> exp op_relacion exp .)
+
+
+state 120
+
+    (28) ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .
+
+    ID              reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    IF              reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    WHILE           reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    PRINT           reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    RETURN          reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    END             reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+    ELSE            reduce using rule 28 (ciclo -> WHILE PARENT_A exp_relacion PARENT_C body .)
+
+
+state 121
+
+    (30) print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .
+
+    ID              reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    IF              reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    WHILE           reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    PRINT           reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    RETURN          reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    END             reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    ELSE            reduce using rule 30 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+
+
+state 122
+
+    (37) sig_exp -> MAS termino sig_exp .
+
+    PUNTO_COMA      reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    COMA            reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    PARENT_C        reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    IGUAL           reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    NO_IGUAL        reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    MENOR           reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    MAYOR           reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    MENOR_IGUAL     reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+    MAYOR_IGUAL     reduce using rule 37 (sig_exp -> MAS termino sig_exp .)
+
+
+state 123
+
+    (38) sig_exp -> MENOS termino sig_exp .
+
+    PUNTO_COMA      reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    COMA            reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    PARENT_C        reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    IGUAL           reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    NO_IGUAL        reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    MENOR           reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    MAYOR           reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    MENOR_IGUAL     reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+    MAYOR_IGUAL     reduce using rule 38 (sig_exp -> MENOS termino sig_exp .)
+
+
+state 124
+
+    (41) sig_termino -> MULT factor sig_termino .
+
+    MAS             reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    MENOS           reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    PUNTO_COMA      reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    COMA            reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    PARENT_C        reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    IGUAL           reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    NO_IGUAL        reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    MENOR           reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    MAYOR           reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    MENOR_IGUAL     reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+    MAYOR_IGUAL     reduce using rule 41 (sig_termino -> MULT factor sig_termino .)
+
+
+state 125
+
+    (42) sig_termino -> DIV factor sig_termino .
+
+    MAS             reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    MENOS           reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    PUNTO_COMA      reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    COMA            reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    PARENT_C        reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    IGUAL           reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    NO_IGUAL        reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    MENOR           reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    MAYOR           reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    MENOR_IGUAL     reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+    MAYOR_IGUAL     reduce using rule 42 (sig_termino -> DIV factor sig_termino .)
+
+
+state 126
+
+    (45) factor -> ID PARENT_A lista_exp PARENT_C .
+
+    MULT            reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    DIV             reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MAS             reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MENOS           reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    PUNTO_COMA      reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    COMA            reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    PARENT_C        reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    IGUAL           reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    NO_IGUAL        reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MENOR           reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MAYOR           reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MENOR_IGUAL     reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+    MAYOR_IGUAL     reduce using rule 45 (factor -> ID PARENT_A lista_exp PARENT_C .)
+
+
+state 127
+
+    (2) func -> VOID ID PARENT_A parametros PARENT_C vars START . body END
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    END             reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    body                           shift and go to state 133
+    estatuto                       shift and go to state 26
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 128
+
+    (8) mas_parametros -> COMA tipo . ID mas_parametros
+
+    ID              shift and go to state 134
+
+
+state 129
+
+    (3) func -> INT ID PARENT_A parametros PARENT_C vars START . body END
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    END             reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    body                           shift and go to state 135
+    estatuto                       shift and go to state 26
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 130
+
+    (4) func -> FLOAT ID PARENT_A parametros PARENT_C vars START . body END
+    (17) body -> . estatuto body
+    (18) body -> . empty
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (58) empty -> .
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    END             reduce using rule 58 (empty -> .)
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    body                           shift and go to state 136
+    estatuto                       shift and go to state 26
+    empty                          shift and go to state 27
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 131
+
+    (34) mas_exp -> COMA exp mas_exp .
+
+    PARENT_C        reduce using rule 34 (mas_exp -> COMA exp mas_exp .)
+
+
+state 132
+
+    (27) condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE . estatuto
+    (19) estatuto -> . asigna
+    (20) estatuto -> . condicion
+    (21) estatuto -> . ciclo
+    (22) estatuto -> . call
+    (23) estatuto -> . print
+    (24) estatuto -> . retorno
+    (25) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (26) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto
+    (27) condicion -> . IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    (28) ciclo -> . WHILE PARENT_A exp_relacion PARENT_C body
+    (29) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (30) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (31) retorno -> . RETURN exp PUNTO_COMA
+
+    ID              shift and go to state 24
+    IF              shift and go to state 34
+    WHILE           shift and go to state 35
+    PRINT           shift and go to state 36
+    RETURN          shift and go to state 37
+
+    estatuto                       shift and go to state 137
+    asigna                         shift and go to state 28
+    condicion                      shift and go to state 29
+    ciclo                          shift and go to state 30
+    call                           shift and go to state 31
+    print                          shift and go to state 32
+    retorno                        shift and go to state 33
+
+state 133
+
+    (2) func -> VOID ID PARENT_A parametros PARENT_C vars START body . END
+
+    END             shift and go to state 138
+
+
+state 134
+
+    (8) mas_parametros -> COMA tipo ID . mas_parametros
+    (8) mas_parametros -> . COMA tipo ID mas_parametros
+    (9) mas_parametros -> . empty
+    (58) empty -> .
+
+    COMA            shift and go to state 112
+    PARENT_C        reduce using rule 58 (empty -> .)
+
+    mas_parametros                 shift and go to state 139
+    empty                          shift and go to state 113
+
+state 135
+
+    (3) func -> INT ID PARENT_A parametros PARENT_C vars START body . END
+
+    END             shift and go to state 140
+
+
+state 136
+
+    (4) func -> FLOAT ID PARENT_A parametros PARENT_C vars START body . END
+
+    END             shift and go to state 141
+
+
+state 137
+
+    (27) condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .
+
+    ID              reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    IF              reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    WHILE           reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    PRINT           reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    RETURN          reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    END             reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+    ELSE            reduce using rule 27 (condicion -> IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto .)
+
+
+state 138
+
+    (2) func -> VOID ID PARENT_A parametros PARENT_C vars START body END .
+
+    START           reduce using rule 2 (func -> VOID ID PARENT_A parametros PARENT_C vars START body END .)
+
+
+state 139
+
+    (8) mas_parametros -> COMA tipo ID mas_parametros .
+
+    PARENT_C        reduce using rule 8 (mas_parametros -> COMA tipo ID mas_parametros .)
+
+
+state 140
+
+    (3) func -> INT ID PARENT_A parametros PARENT_C vars START body END .
+
+    START           reduce using rule 3 (func -> INT ID PARENT_A parametros PARENT_C vars START body END .)
+
+
+state 141
+
+    (4) func -> FLOAT ID PARENT_A parametros PARENT_C vars START body END .
+
+    START           reduce using rule 4 (func -> FLOAT ID PARENT_A parametros PARENT_C vars START body END .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ID in state 26 resolved as shift
+WARNING: shift/reduce conflict for IF in state 26 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 26 resolved as shift
+WARNING: shift/reduce conflict for PRINT in state 26 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 26 resolved as shift
+WARNING: shift/reduce conflict for ID in state 102 resolved as shift
+WARNING: shift/reduce conflict for IF in state 102 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 102 resolved as shift
+WARNING: shift/reduce conflict for PRINT in state 102 resolved as shift
+WARNING: shift/reduce conflict for RETURN in state 102 resolved as shift
+WARNING: shift/reduce conflict for ELSE in state 118 resolved as shift
