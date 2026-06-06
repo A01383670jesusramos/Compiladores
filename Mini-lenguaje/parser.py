@@ -5,8 +5,9 @@ from traductor import Traductor
 
 directorio = DirectorioFunciones()
 tabla_vars = TablaVariables()
-traductor = Traductor(tabla_vars)
+traductor = Traductor(tabla_vars, directorio)
 funcion_actual = None
+parametros_actuales = []
 
 precedence = (
     ('left', 'IGUAL', 'NO_IGUAL', 'MENOR', 'MAYOR', 'MENOR_IGUAL', 'MAYOR_IGUAL'),
@@ -17,13 +18,11 @@ precedence = (
 
 def p_program(p):
     '''
-    programa : PROGRAM ID DOS_PUNTOS vars func START body END
+    programa : PROGRAM ID DOS_PUNTOS inicio_program vars func main_inicio START body END
     '''
     print("Programa valido")
     print(f" Nombre: {p[2]}")
 
-    print("DIRECTORIO DE FUNCIONES")
-    print(directorio.funciones)
     print("TABLA DE VARIABLES")
     for i, ambito in enumerate(tabla_vars.pila_ambitos):
         print(f" Ambito {i}: {ambito}")
@@ -36,32 +35,57 @@ def p_program(p):
 
     p[0] = ('program', p[2])
 
+def p_inicio_program(p):
+    '''
+    inicio_program :
+    '''
+    traductor.iniciar_main()
+
+def p_main_inicio(p):
+    '''
+    main_inicio :
+    '''
+    # Traducir inicio de main
+    traductor.marcar_main()
+
 def p_func(p):
     '''
-    func : VOID ID PARENT_A parametros PARENT_C vars START body END
-         | INT ID PARENT_A parametros PARENT_C vars START body END
-         | FLOAT ID PARENT_A parametros PARENT_C vars START body END
+    func : VOID ID inicio_func PARENT_A parametros PARENT_C vars START body END
+         | INT ID inicio_func PARENT_A parametros PARENT_C vars START body END
+         | FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END
          | empty
     '''
+    global funcion_actual
     if len(p) > 2:
-        funcion_actual = p[2]
         tipo_return = p[1]
-        parametros = p[4]
-
-        directorio.agregar(funcion_actual, tipo_return, parametros)
-        traductor.iniciar_func(funcion_actual)
-
-        tabla_vars.entrada_ambito()
-        for nom_param, tipo_param in parametros:
-            dir_param = tabla_vars.nueva_var_p(nom_param, funcion_actual)
-            tabla_vars.declar_var(nom_param, tipo_param, p.lineno(2))
-            tabla_vars.pila_ambitos[-1][nom_param]['direccion'] = dir_param
+        parametros = p[5]
+        print("DEBUG dir_p =", tabla_vars.dir_p)
+        info = directorio.buscar(funcion_actual)
+        info['parametros'] = parametros
+        info['num_parametros'] = len(parametros)
 
         print(f" Funcion: {p[2]} tipo {p[1]}")
         traductor.finalizar_func()
+        print("DIRECTORIO DE FUNCIONES:")
+        print(tabla_vars.pila_ambitos[-1])
         tabla_vars.salida_ambito()
         funcion_actual = None
     p[0] = None
+
+def p_inicio_func(p):
+    '''
+    inicio_func :
+    '''
+    global funcion_actual
+    funcion_actual = p[-1] # ID funcion
+    traductor.funcion_actual = funcion_actual
+    tipo_return = p[-2] # tipo de retorno (VOID, INT, FLOAT)
+    directorio.agregar(funcion_actual, tipo_return, [])
+    tabla_vars.entrada_ambito()
+    print("DEBUG tipo=", p[-2])
+    # directorio.agregar(funcion_actual, tipo_return, [])
+    traductor.iniciar_func(funcion_actual)
+    print(f" Debug: inicio_func:", funcion_actual)
 
 def p_parametros(p):
     '''
@@ -69,9 +93,15 @@ def p_parametros(p):
                | empty
     '''
     if len(p) == 4:
-        p[0] = [(p[2], p[1])] + (p[3] if p[3] else [])
+        lista = [(p[2], p[1])] + (p[3] if p[3] else [])
+        for nom_param, tipo_param in lista:
+            dir_param = tabla_vars.nueva_var_p(nom_param, funcion_actual)
+            tabla_vars.declar_var(nom_param, tipo_param, p.lineno(2))
+            tabla_vars.pila_ambitos[-1][nom_param]['direccion'] = dir_param
+        p[0] = lista
     else:
         p[0] = []
+    print("DEBUG dir_p =", tabla_vars.dir_p)
 
 def p_mas_parametros(p):
     '''
@@ -158,33 +188,106 @@ def p_asigna(p):
 
 def p_condicion(p):
     '''
-    condicion : IF PARENT_A exp_relacion PARENT_C estatuto
-              | IF PARENT_A exp_relacion PARENT_C estatuto ELSE estatuto
+    condicion : IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
+              | IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
     '''
+    result = p[3][0]  # resultado de la condicion
+    dir_result = p[3][1]  # direccion del resultado
+    tipo_exp = p[3][2]  # tipo del resultado
     if len(p) == 6:
-        result, dir_result, tipo_exp = traductor.fin_expresion()
-        label_fin = traductor.traduc_if(dir_result)
-        traductor.finalizar_if(label_fin)
         print(f" If: condicion {result}")
         p[0] = ('if', result, p[5])
     else:
-        result, dir_result, tipo_exp = traductor.fin_expresion()
-        label_else, label_fin = traductor.traduc_else(dir_result)
-        traductor.salto(label_else, label_fin)
-        traductor.finalizar_else(label_fin)
         print(f" If-Else: condicion {result}")
         p[0] = ('if-else', result, p[5], p[7])
 
+def p_if_condicion(p):
+    '''
+    if_condicion :
+    '''
+    # Se evalua la exp_relacion
+    _, dir_result, _, = p[-2] # exp_relacion contiene el resultado, su direccion y tipo
+    label_fin = traductor.nueva_etiqueta()
+    traductor.gen.cuadruplos.agregar('GOTOF', dir_result, None, label_fin)
+
+    traductor.gen.saltos.push(label_fin)
+
+def p_if_fin(p):
+    '''
+    if_fin :
+    '''
+    # Fin del cuerpo de la condicional. Se saca el salto de la pila
+    label_fin = traductor.gen.saltos.pop()
+    traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
+
+def p_else_inicio(p):
+    '''
+    else_inicio :
+    '''
+    # Se crea la etiqueta para el salto del else
+    label_else = traductor.gen.saltos.pop()
+    label_fin = traductor.nueva_etiqueta()
+    traductor.gen.cuadruplos.agregar('GOTO', None, None, label_fin)
+    traductor.gen.cuadruplos.agregar('LABEL', None, None, label_else)
+    traductor.gen.saltos.push(label_fin)
+
+def p_else_fin(p):
+    '''
+    else_fin :
+    '''
+    # Fin del cuerpo del else. Se saca el salto de la pila
+    label_fin = traductor.gen.saltos.pop()
+    traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
+
+# def p_ciclo(p):
+#     '''
+#     ciclo : WHILE PARENT_A exp_relacion PARENT_C body
+#     '''
+#     label_inicio, label_fin = traductor.traduc_while_inicio()
+#     result = p[3][0]  # resultado de la condicion
+#     dir_result = p[3][1]  # direccion del resultado
+#     tipo_exp = p[3][2]  # tipo del resultado
+
+#     traductor.traduc_while_condicion(dir_result, label_inicio, label_fin)
+#     traductor.finalizar_while(label_inicio, label_fin)
+#     print(f" While: condicion {result}")
+#     p[0] = ('while', result, p[5])
+
 def p_ciclo(p):
     '''
-    ciclo : WHILE PARENT_A exp_relacion PARENT_C body
+    ciclo : WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
     '''
-    label_inicio, label_fin = traductor.traduc_while_inicio()
-    result, dir_result, tipo_exp = traductor.fin_expresion()
-    traductor.traduc_while_condicion(dir_result, label_inicio, label_fin)
-    traductor.finalizar_while(label_inicio, label_fin)
-    print(f" While: condicion {result}")
-    p[0] = ('while', result, p[5])
+    print(f" While: condicion {p[4][0]}")
+
+def p_while_inicio(p):
+    '''
+    while_inicio : 
+    '''
+    # Crear etiqueta de inicio
+    label_inicio = traductor.nueva_etiqueta()
+    traductor.gen.cuadruplos.agregar('LABEL', None, None, label_inicio)
+    traductor.gen.saltos.push(label_inicio)
+
+def p_while_condicion(p):
+    '''
+    while_condicion :
+    '''
+    # Se evalua la exp_relacion
+    _, dir_result, _, = p[-2] # exp_relacion contiene el resultado, su direccion y tipo
+    label_fin = traductor.nueva_etiqueta()
+    traductor.gen.cuadruplos.agregar('GOTOF', dir_result, None, label_fin)
+
+    traductor.gen.saltos.push(label_fin)
+
+def p_while_fin(p):
+    '''
+    while_fin :
+    '''
+    # Fin del cuerpo de la condicional. Se sacan los saltos de la pila
+    label_fin = traductor.gen.saltos.pop()
+    label_inicio = traductor.gen.saltos.pop()
+    traductor.gen.cuadruplos.agregar('GOTO', None, None, label_inicio)
+    traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
 
 def p_call(p):
     '''
@@ -200,7 +303,17 @@ def p_call(p):
         else:
             dirs_agrs.append(arg)
 
-    traductor.traduc_call(nombre_func, dirs_agrs)
+    info = directorio.buscar(nombre_func)
+    if info:
+        args_esperados = info['num_parametros']
+        args_recibidos = len(args)
+        if args_esperados != args_recibidos:
+            print(f"Error: funcion '{nombre_func}' esperaba "
+                  f"{args_esperados} argumento(s) pero recibio {args_recibidos}")
+        else:
+            traductor.traduc_call(nombre_func, dirs_agrs)
+    else:
+        print(f"Error: funcion '{nombre_func}' no declarada")
     print(f" Call: {p[1]}({p[3]})")
     p[0] = ('call', p[1], p[3])
 
@@ -208,21 +321,33 @@ def p_print(p):
     '''
     print : PRINT PARENT_A exp PARENT_C PUNTO_COMA
     '''
-    result, tipo_exp = traductor.fin_expresion()
-    traductor.gen.cuadruplos.agregar('print', result, None, None)
+    result, dir_result, tipo_exp = traductor.fin_expresion()
+    traductor.gen.cuadruplos.agregar('print', dir_result, None, None)
     print(f" Print: {result}")
     p[0] = ('print', result)
 
 def p_retorno(p):
     '''
     retorno : RETURN exp PUNTO_COMA
+            | RETURN PUNTO_COMA
     '''
-    print("DEBUG: Procesando return...")
-    result, dir_result, tipo_exp = traductor.fin_expresion()
-    print(f"DEBUG: result={result}, dir_result={dir_result}, tipo={tipo_exp}")
-    traductor.traduc_return(dir_result)
-    print(f" Return: {result}")
-    p[0] = ('return', result)
+    # print("DEBUG: Procesando return...")
+    # result, dir_result, tipo_exp = traductor.fin_expresion()
+    # print(f"DEBUG: result={result}, dir_result={dir_result}, tipo={tipo_exp}")
+    # traductor.traduc_return(dir_result)
+    # print(f" Return: {result}")
+    # p[0] = ('return', result)
+    if len(p) == 4:
+        result, dir_result, tipo_exp = traductor.fin_expresion()
+        traductor.validar_return(tipo_exp, valor=True)
+        traductor.traduc_return(dir_result)
+        print(f" Return: {result}")
+        p[0] = ('return', result)
+    else:
+        traductor.validar_return('void', valor=False)
+        traductor.traduc_return(None)
+        print(f" Return")
+        p[0] = ('return', None)
 
 def p_lista_exp(p):
     '''
@@ -297,7 +422,10 @@ def p_factor(p):
             var_info = tabla_vars.buscar_var(nombre)
             tipo = var_info['tipo'] if var_info else 'int'
             # Obtener direccion virtual
-            direccion = tabla_vars.obtener_dir_var(nombre, tabla_vars.cont_ambitos, None)
+            print("DEBUG: ", nombre, "funcion =", funcion_actual)
+            direccion = tabla_vars.obtener_dir_var(nombre, tabla_vars.cont_ambitos, funcion_actual)
+            print("DEBUG:", nombre, "dir =", direccion)
+            print("Debug ID =", nombre, "Dir =", direccion)
             traductor.proces_operando(nombre, tipo, direccion)
             p[0] = (nombre, direccion)
         elif p.slice[1].type == 'CTE_INT':
@@ -334,8 +462,8 @@ def p_exp_relacion(p):
     exp_relacion : exp op_relacion exp
     '''
     traductor.proces_operador(p[2])
-    result, tip = traductor.fin_expresion()
-    p[0] = (p[2], p[1], p[3])
+    result, dir_result, tipo = traductor.fin_expresion()
+    p[0] = (result, dir_result, tipo)
 
 def p_op_relacion(p):
     '''

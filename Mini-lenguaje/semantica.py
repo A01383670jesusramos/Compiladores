@@ -377,6 +377,11 @@ class Fila_Cuadruplos:
     def __len__(self):
         return len(self.cuadruplos)
     
+    def actualizar_result(self, indice, nuevo_result):
+        # Actualiza el resultado de un cuadruplo existente
+        operador, op1, op2, _ = self.obtener(indice)
+        self.cuadruplos[indice] = (operador, op1, op2, nuevo_result)
+    
     def __repr__(self):
         result = []
         for i, (opr, op1, op2, res) in enumerate(self.cuadruplos):
@@ -393,6 +398,7 @@ class Generar_Codigo:
         self.tipos = Pila_Tipos()
         self.cuadruplos = Fila_Cuadruplos()
         self.operandos_direcciones = Pila_Direcciones()
+        self.saltos = Pila_Jumps()
 
     def limpiar(self):
         # Limpia las estructuras
@@ -417,3 +423,8 @@ class Generar_Codigo:
 class Pila_Direcciones(Pila):
     # Pila para direcciones virtuales
     pass
+
+class Pila_Jumps(Pila):
+    # Pila para saltos
+    pass
+

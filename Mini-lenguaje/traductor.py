@@ -2,25 +2,27 @@ from semantica import Generar_Codigo, CuboSemantico
 
 class Traductor:
     # Traduce expresiones y estatutos a cuadruplos
-    def __init__(self, tabla_vars):
+    def __init__(self, tabla_vars, directorio):
         self.gen = Generar_Codigo()
         self.cubo = CuboSemantico()
         self.tabla_vars = tabla_vars
+        self.directorio = directorio
         self.operadores_aritmeticos = {'+', '-', '*', '/'}
         self.operadores_relacionales = {'==', '!=', '<', '>', '<=', '>='}
         self.cont_etiquetas = 0 # ENTREGA 4
+        self.funcion_actual = None # ENTREGA 4
+        self.retorno = False # ENTREGA 4
+        self.pos_goto_main = None # ENTREGA 4
 
     # ENTREGA 4
     def nueva_var_temp(self):
         # Asignar dirección virtual a una variable temporal
         self.tabla_vars.cont_temp += 1
-        direccion = self.tabla_vars.rango_dir_temp + self.tabla_vars.cont_temp - 1
+        direccion = (self.tabla_vars.rango_dir_temp + self.tabla_vars.cont_temp - 1)
         nombre = f"t{self.tabla_vars.cont_temp}"
 
         # Guardar al diccionario de variables temporales
         self.tabla_vars.dir_temp[nombre] = direccion
-        self.gen.operandos_direcciones.push(direccion)
-        self.gen.tipos.push('int')
         return nombre, direccion
 
     # ENTREGA 4
@@ -48,7 +50,7 @@ class Traductor:
                 operando = self.gen.operandos.pop()
                 tipo_op = self.gen.tipos.pop()
 
-                temp_nombre, temp_dir = self.nueva_var_temp()()
+                temp_nombre, temp_dir = self.nueva_var_temp()
                 self.gen.operandos.push(temp_nombre)
                 self.gen.operandos_direcciones.push(temp_dir)
                 self.gen.tipos.push(tipo_op)
@@ -70,7 +72,7 @@ class Traductor:
                     print(f"Error semantico: '{op}' entre {tipo_op1} y {tipo_op2} no valida")
                     tipo_res = 'error'
 
-                temp_nombre, temp_dir = self.nueva_var_temp()()
+                temp_nombre, temp_dir = self.nueva_var_temp()
                 self.gen.operandos.push(temp_nombre)
                 self.gen.operandos_direcciones.push(temp_dir)
                 self.gen.tipos.push(tipo_res)
@@ -127,7 +129,7 @@ class Traductor:
     
     def proces_umenos(self):
         # Procesar menos unario
-        self.gen.operandores.push('UMENOS')
+        self.gen.operadores.push('UMENOS')
 
     def fin_expresion(self):
         # Finaliza el proceso de una expreision
@@ -141,7 +143,7 @@ class Traductor:
                 dir_operando = self.gen.operandos_direcciones.pop()
                 tipo_op = self.gen.tipos.pop()
 
-                temp_nombre, temp_dir = self.nueva_var_temp()()
+                temp_nombre, temp_dir = self.nueva_var_temp()
                 self.gen.operandos.push(temp_nombre)
                 self.gen.operandos_direcciones.push(temp_dir)
                 self.gen.tipos.push(tipo_op)
@@ -163,10 +165,13 @@ class Traductor:
                     print(f"Error semantico: '{op}' entre {tipo_op1} y {tipo_op2} no valida")
                     tipo_res = 'error'
                 
-                temp_nombre, temp_dir = self.nueva_var_temp()()
+                temp_nombre, temp_dir = self.nueva_var_temp()
                 self.gen.operandos.push(temp_nombre)
                 self.gen.operandos_direcciones.push(temp_dir)
                 self.gen.tipos.push(tipo_res)
+                print(f"Debug op = {op}\n"
+                      f"dir1 = {dir_operando1}\n"
+                      f"dir2 = {dir_operando2}")
                 self.gen.cuadruplos.agregar(op, dir_operando1, dir_operando2, temp_dir)
         
         #Resuldato final en el tope de Pila_Operandos
@@ -189,13 +194,9 @@ class Traductor:
         # Traducir llamada a funcion
 
         for i, arg in enumerate(args):
-            self.gen.cuadruplos.agregar('param', arg, None, None)
+            self.gen.cuadruplos.agregar('PARAM', arg, None, None)
         
         self.gen.cuadruplos.agregar('call', nom_func, None, None)
-
-    def traduc_return(self, exp):
-        # Traducir return
-        pass
 
     def traduc_print(self, exp):
         # Traducir print
@@ -252,29 +253,65 @@ class Traductor:
         self.gen.cuadruplos.agregar('label', None, None, label)
 
         self.funcion_actual = nombre
+        self.retorno = False
     
     def finalizar_func(self):
         # Finalizar traduccion de funcion
+        info = self.directorio.buscar(self.funcion_actual)
+        if info is not None:
+            tipo = info['tipo_return']
+            if tipo != 'void' and not self.retorno:
+                print(f"Error: Funcion debe devolver valor.\nFuncion: {self.funcion_actual}")
+
         self.gen.cuadruplos.agregar('ENDF', None, None, None)
         self.funcion_actual = None
-    
-    def traduc_param(self, nom_param, dir_param):
-        # Traducir parametro
-        pass
 
     def traduc_call(self, nom_func, argumentos):
         # Traducir llamada a funcion
+        num_param = 1
         for arg_dir in argumentos:
-            self.gen.cuadruplos.agregar('param', arg_dir, None, None)
+            self.gen.cuadruplos.agregar('PARAM', arg_dir, None, num_param)
+            num_param += 1
 
-        self.gen.cuadruplos.agregar('call', nom_func, None, None)
+        self.gen.cuadruplos.agregar('GOSUB', nom_func, None, None)
     
     def traduc_return(self, dir_result=None):
         # Traducir return
+        self.retorno = True
         if dir_result is not None:
             self.gen.cuadruplos.agregar('return', dir_result, None, None)
         else:
             self.gen.cuadruplos.agregar('return', None, None, None)
+    
+    def validar_return(self, tipo_exp, valor):
+        # Validar tipo de return
+        info = self.directorio.buscar(self.funcion_actual)
+        if info is None:
+            print(f"Error: return fuera de funcion")
+            return
+        
+        tipo_func = info['tipo_return']
+        if tipo_func == 'void':
+            if valor:
+                print(f"Error: funcion void no devuelve valor.\nFuncion: {self.funcion_actual}")
+        else:
+            if not valor:
+                print(f"Error: Funcion debe devolver valor.\nFuncion: {self.funcion_actual}")
+            elif not self.cubo.asignacion_valida(tipo_func, tipo_exp):
+                print(f"Error: Type Mismatch."
+                      f"Tipo obtenido: {tipo_exp}"
+                      f"Tipo esperado: {tipo_func}."
+                      f"Funcion: {self.funcion_actual}")
+    
+    def iniciar_main(self):
+        # Traducir main
+        self.pos_goto_main = self.gen.cuadruplos.agregar('GOTO', None, None, None)
+    
+    def marcar_main(self):
+        # Marcar inicio de main para generar el cuádruplo
+        inicio_main = len(self.gen.cuadruplos)
+        self.gen.cuadruplos.actualizar_result(self.pos_goto_main, inicio_main)
+
 
 # Prueba
 

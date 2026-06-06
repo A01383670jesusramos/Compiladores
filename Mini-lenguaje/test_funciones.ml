@@ -1,7 +1,11 @@
 program test:
-    void saludar()
-        start
-        end
+
+    int suma(int a, int b)
+
     start
-        saludar();
+        return a+b;
+    end
+
+    start
+        suma(5, 7);
     end

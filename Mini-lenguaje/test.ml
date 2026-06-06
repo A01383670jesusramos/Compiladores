@@ -1,6 +1,5 @@
 program test:
-    var int x, y;
+    var float x;
     start
         x = 5;
-        y = 10;
     end
