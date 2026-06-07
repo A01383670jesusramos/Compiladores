@@ -52,7 +52,7 @@ def test_funcion_suma():
         ('PARAM', 6001, None, 2),
         ('GOSUB', 'suma', None, 5),
         ('=', 8999, None, 2000),
-        ('ENDF', None, None, None)
+        ('ENDF', None, None, None),
         ('+', 6000, 6001, 8000),  
         ('RETURN', 8000, None, None),
         ('ENDF', None, None, None)
@@ -119,8 +119,8 @@ def test_while():
     print()
 
 if __name__ == "__main__":
-    test_lectura_escritura()
-    test_suma_asignacion()
-    #test_funcion_suma()
-    test_if()
-    test_while()
+    #test_lectura_escritura()
+    #test_suma_asignacion()
+    test_funcion_suma()
+    #test_if()
+    #test_while()
