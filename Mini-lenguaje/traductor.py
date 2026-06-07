@@ -190,13 +190,13 @@ class Traductor:
             dir_var = self.tabla_vars.nueva_var_g(id_var)
         self.gen.cuadruplos.agregar('=', dir_result, None, dir_var)
 
-    def traduc_call(self, nom_func, args):
-        # Traducir llamada a funcion
+    # def traduc_call(self, nom_func, args):
+    #     # Traducir llamada a funcion
 
-        for i, arg in enumerate(args):
-            self.gen.cuadruplos.agregar('PARAM', arg, None, None)
+    #     for i, arg in enumerate(args):
+    #         self.gen.cuadruplos.agregar('PARAM', arg, None, None)
         
-        self.gen.cuadruplos.agregar('call', nom_func, None, None)
+    #     self.gen.cuadruplos.agregar('call', nom_func, None, None)
 
     def traduc_print(self, exp):
         # Traducir print
@@ -268,6 +268,8 @@ class Traductor:
 
     def traduc_call(self, nom_func, argumentos):
         # Traducir llamada a funcion
+        self.gen.cuadruplos.agregar('ERA', nom_func, None, None)
+
         num_param = 1
         for arg_dir in argumentos:
             self.gen.cuadruplos.agregar('PARAM', arg_dir, None, num_param)
