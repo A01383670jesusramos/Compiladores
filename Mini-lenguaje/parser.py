@@ -307,10 +307,8 @@ def p_call(p):
 
     dirs_agrs = []
     for arg in args:
-        if isinstance(arg, tuple) and len(arg) == 2:
-            dirs_agrs.append(arg[1]) # valor y direccion
-        else:
-            dirs_agrs.append(arg)
+        result, dir_result, tipo_result = traductor.fin_expresion()
+        dirs_agrs.append(dir_result)
 
     info = directorio.buscar(nombre_func)
     if info:
@@ -460,10 +458,8 @@ def p_factor(p):
         args = p[3] if p[3] else []
         dirs_agrs = []
         for arg in args:
-            if isinstance(arg, tuple) and len(arg) == 2:
-                dirs_agrs.append(arg[1]) # valor y direccion
-            else:
-                dirs_agrs.append(arg)
+            result, dir_result, tipo_result = traductor.fin_expresion()
+            dirs_agrs.append(dir_result)
         info = directorio.buscar(nombre_func)
         dir_ret = info['dir_ret'] if info else None
         if info:

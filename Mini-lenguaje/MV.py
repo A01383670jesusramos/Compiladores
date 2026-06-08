@@ -82,7 +82,7 @@ class MaquinaVirtual:
         elif seg == "temp":
             if frame:
                 return frame["temp"].get(dir, 0)
-            return 0
+            return self.memoria.memoria["temp"].get(dir, 0)
         elif seg == "param":
             if frame:
                 return frame["param"].get(dir, 0)
@@ -105,6 +105,8 @@ class MaquinaVirtual:
         elif seg == "temp":
             if frame:
                 frame["temp"][dir] = valor
+            else:
+                self.memoria.memoria["temp"][dir] = valor
         elif seg == "param":
             if frame:
                 frame["param"][dir] = valor
@@ -195,10 +197,23 @@ class MaquinaVirtual:
     def ejecutar_param(self, arg1, result):
         # Almacena un parámetro en el frame actual para pasar a la función
         frame = self.memoria.frame_actual()
-        valor = self.leer(arg1)
+        seg = self.memoria.obtener_segmento(arg1)
+        frame_origen = self.memoria.pila_ambitos[-2] if len(self.memoria.pila_ambitos) >= 2 else None
+
+        if seg == "local" and frame_origen:
+            valor = frame_origen["local"].get(arg1, 0)
+        elif seg == "temp" and frame_origen:
+            valor = frame_origen["temp"].get(arg1, 0)
+        elif seg == "temp":
+            valor = self.memoria.memoria["temp"].get(arg1, 0)
+        elif seg == "param" and frame_origen:
+            valor = frame_origen["param"].get(arg1, 0)
+        elif seg == "global":
+            valor = self.memoria.memoria["global"].get(arg1, 0)
+        else:
+            valor = self.leer(arg1)
         print(f"PARAM {result}: valor = {valor}")
-        dir_param = 6000 + (result - 1)  # Asumimos que los parametros se almacenan a partir de 6000
-        frame["param"][dir_param] = valor
+        frame["param"][result] = valor
 
     def ejecutar_gosub(self, nombre_func, arg1, result):
         # Realiza un salto a la función, guardando la dirección de retorno en la pila

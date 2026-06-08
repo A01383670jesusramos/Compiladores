@@ -268,12 +268,18 @@ class Traductor:
         # Traducir llamada a funcion
         self.gen.cuadruplos.agregar('ERA', nom_func, None, None)
 
-        num_param = 1
-        for arg_dir in argumentos:
-            self.gen.cuadruplos.agregar('PARAM', arg_dir, None, num_param)
-            num_param += 1
-
         info = self.directorio.buscar(nom_func)
+        parametros = info['parametros'] if info else []
+
+        for indice, arg_dir in enumerate(argumentos):
+            dir_param = None
+            if indice < len(parametros):
+                nombre_param = parametros[indice][0]
+                dir_param = self.tabla_vars.obtener_dir_p(nombre_param, nom_func)
+            if dir_param is None:
+                dir_param = 6000 + indice
+            self.gen.cuadruplos.agregar('PARAM', arg_dir, None, dir_param)
+
         inicio_func = info['inicio'] if info else None
         self.gen.cuadruplos.agregar('GOSUB', nom_func, None, inicio_func)
         if info['tipo_return'] != 'void':
