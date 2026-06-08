@@ -67,12 +67,13 @@ class DirectorioFunciones:
     def __init__(self):
         self.funciones = {}
 
-    def agregar(self, nombre, tipo_return, parametros, inicio=None):
+    def agregar(self, nombre, tipo_return, parametros, inicio=None, dir_ret=None):
         self.funciones[nombre] = {
             'tipo_return': tipo_return,
             'parametros': parametros,
             'num_parametros': len(parametros),
-            'inicio': inicio
+            'inicio': inicio,
+            'dir_ret': dir_ret
         }
     
     def buscar(self, nombre):
@@ -104,6 +105,7 @@ class TablaVariables:
         self.rango_dir_l = 4000 # var locales en direcciones de 4000 a 5999
         self.rango_dir_p = 6000 # parametros en direcciones de 6000 a 7999
         self.rango_dir_temp = 8000 # var temporales en direcciones de 8000 a 9999
+        self.rango_dir_retorno = 10000 # valor de retorno en direccion 10000
 
         self.cont_cte = 0
         self.cont_g = 0
@@ -183,6 +185,11 @@ class TablaVariables:
             direccion = self.rango_dir_p + self.cont_p - 1
             self.dir_p[clave] = direccion
         return self.dir_p[clave]
+    
+    def nueva_dir_return(self):
+        dir_ret = self.rango_dir_retorno
+        self.rango_dir_retorno += 1
+        return dir_ret
     
     # Obtener direcciones
     def obtener_dir_cte(self, valor):

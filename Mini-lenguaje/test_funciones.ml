@@ -1,11 +1,15 @@
 program test:
 
-    int suma(int a, int b)
+    int doble(int x)
+    start
+        return x + x;
+    end
 
+    int suma(int a, int b)
     start
         return a + b;
     end
 
     start
-        suma(5, 7);
+        x = doble(suma(10,20));
     end

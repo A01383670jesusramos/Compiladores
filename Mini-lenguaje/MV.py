@@ -5,7 +5,8 @@ class Memoria:
             "cte": {},
             "local": {},
             "temp": {},
-            "param": {}
+            "param": {},
+            "retorno": {}
         }
 
         self.pila_calls = []  # Pila para manejar llamadas a funciones
@@ -36,11 +37,11 @@ class Memoria:
             return "local"
         elif 6000 <= dir < 8000:
             return "param"
-        elif dir >= 8000:
+        elif 8000 <= dir < 10000:
             return "temp"
-        elif dir == 10000:
-            return self.valor_retorno 
-    
+        elif 10000 <= dir < 12000:
+            return "retorno"
+
     def leer_cte(self, dir):
         return self.memoria["cte"].get(dir, 0)
     
@@ -55,13 +56,10 @@ class MaquinaVirtual:
         self.directorio_funciones = directorio_funciones
         self.ip = 0  # pointer de instruccion
         self.pila_retornos = []  # pila para manejar direcciones de retorno
+        self.pila_funciones = []  # pila para manejar funciones
         self.valor_retorno = None
-        self.dir_retorno = 10000  # Dirección especial para retorno de funciones
 
     def leer(self, dir):
-        #return self.memoria.memoria.get(dir, 0)
-        if dir == 10000:
-            return self.valor_retorno
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -80,12 +78,10 @@ class MaquinaVirtual:
         elif seg == "param":
             if frame:
                 return frame["param"].get(dir, 0)
+        elif seg == "retorno":
+            return self.memoria.memoria["retorno"].get(dir, 0)
     
     def escribir(self, dir, valor):
-        if dir == 10000:
-            self.valor_retorno = valor
-            return
-        
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -102,6 +98,8 @@ class MaquinaVirtual:
         elif seg == "param":
             if frame:
                 frame["param"][dir] = valor
+        elif seg == "retorno":
+            self.memoria.memoria["retorno"][dir] = valor
 
     # ASIGNACION
     def ejecutar_asignacion(self, arg1, result):
@@ -110,7 +108,6 @@ class MaquinaVirtual:
         else:
             valor = self.leer(arg1)
         self.escribir(result, valor)
-        print(f"ASIGNA: {result} = {valor}")
     
     # OPERACIONES ARITMETICAS
     def ejecutar_suma(self, arg1, arg2, result):
@@ -182,17 +179,20 @@ class MaquinaVirtual:
 
     def ejecutar_gosub(self, nombre_func, arg1, result):
         self.pila_retornos.append(self.ip + 1)
+        self.pila_funciones.append(nombre_func)
         self.ip = result - 1
     
     def ejecutar_return(self, arg1, arg2, result):
         if arg1 is not None:
             valor = self.leer(arg1)
+            nombre_func = self.pila_funciones[-1]
+            info = self.directorio_funciones[nombre_func]
+            dir_ret = info['dir_ret']
 
             self.valor_retorno = valor
-            self.escribir(10000, valor)
-            print("RETURN:", valor)
-            print("DIR 10000 =", self.leer(10000))
+            self.escribir(dir_ret, valor)
         
+        self.pila_funciones.pop()
         self.memoria.pop_frame()
 
         if self.pila_retornos:
@@ -216,9 +216,24 @@ class MaquinaVirtual:
     
     def ejecutar_label(self, arg1, arg2, result):
         pass
+
+    def resolver_label(self):
+        mapa = {}
+        for i, (op, arg1, arg2, res) in enumerate(self.cuadruplos):
+            if op == 'LABEL' and isinstance(res, str):
+                mapa[res] = i
+        
+        resueltos = []
+        for (op, arg1, arg2, res) in self.cuadruplos:
+            if op in ('GOTO', 'GOTOF') and isinstance(res, str):
+                res = mapa.get(res, res)
+            resueltos.append((op, arg1, arg2, res))
+        
+        self.cuadruplos = resueltos
     
     # EJECUCION PRINCIPAL
     def ejecutar(self):
+        self.resolver_label()
         while self.ip < len(self.cuadruplos):
             operador, arg1, arg2, result = self.cuadruplos[self.ip]
 

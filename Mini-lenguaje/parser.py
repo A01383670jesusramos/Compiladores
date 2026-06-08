@@ -57,7 +57,7 @@ def p_lista_funcs(p):
 def p_func(p):
     '''
     func : VOID ID inicio_func PARENT_A parametros PARENT_C vars START body END
-         | INT ID inicio_func PARENT_A parametros PARENT_C vars START body END
+         | INT ID inicio_func PARENT_A parametros PARENT_C vars START body END 
          | FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END
     '''
     global funcion_actual
@@ -82,7 +82,10 @@ def p_inicio_func(p):
     funcion_actual = p[-1] # ID funcion
     traductor.funcion_actual = funcion_actual
     tipo_return = p[-2] # tipo de retorno (VOID, INT, FLOAT)
-    directorio.agregar(funcion_actual, tipo_return, [])
+    dir_return = None
+    if tipo_return != 'VOID':
+        dir_return = tabla_vars.nueva_dir_return()
+    directorio.agregar(funcion_actual, tipo_return, [], dir_ret=dir_return)
     inicio_func = traductor.iniciar_func(funcion_actual)
     directorio.actualizar_inicio(funcion_actual, inicio_func)
     tabla_vars.entrada_ambito()
@@ -141,8 +144,6 @@ def p_var(p):
         tabla_vars.declar_var(nombre, tipo_var, p.lineno(1))
         # Se guarda la direccion virtual
         tabla_vars.pila_ambitos[-1][nombre]['direccion'] = direccion
-
-    print(f" Variable(s): {p[3]} tipo {p[2]}")
     p[0] = None
 
 def p_lista_id(p):
@@ -186,8 +187,8 @@ def p_asigna(p):
 
 def p_condicion(p):
     '''
-    condicion : IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-              | IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
+    condicion : IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+              | IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
     '''
     result = p[3][0]  # resultado de la condicion
     dir_result = p[3][1]  # direccion del resultado
@@ -196,7 +197,6 @@ def p_condicion(p):
         print(f" If: condicion {result}")
         p[0] = ('if', result, p[5])
     else:
-        print(f" If-Else: condicion {result}")
         p[0] = ('if-else', result, p[5], p[7])
 
 def p_if_condicion(p):
@@ -237,23 +237,9 @@ def p_else_fin(p):
     label_fin = traductor.gen.saltos.pop()
     traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
 
-# def p_ciclo(p):
-#     '''
-#     ciclo : WHILE PARENT_A exp_relacion PARENT_C body
-#     '''
-#     label_inicio, label_fin = traductor.traduc_while_inicio()
-#     result = p[3][0]  # resultado de la condicion
-#     dir_result = p[3][1]  # direccion del resultado
-#     tipo_exp = p[3][2]  # tipo del resultado
-
-#     traductor.traduc_while_condicion(dir_result, label_inicio, label_fin)
-#     traductor.finalizar_while(label_inicio, label_fin)
-#     print(f" While: condicion {result}")
-#     p[0] = ('while', result, p[5])
-
 def p_ciclo(p):
     '''
-    ciclo : WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    ciclo : WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     '''
     print(f" While: condicion {p[4][0]}")
 
@@ -445,10 +431,11 @@ def p_factor(p):
             else:
                 dirs_agrs.append(arg)
         info = directorio.buscar(nombre_func)
+        dir_ret = info['dir_ret'] if info else None
         if info:
             traductor.traduc_call(nombre_func, dirs_agrs)
-            traductor.proces_operando(10000, info['tipo_return'], 10000)
-            p[0] = (nombre_func, 10000)
+            traductor.proces_operando(nombre_func, info['tipo_return'], dir_ret)
+            p[0] = (nombre_func, dir_ret)
         else:
             print(f"Error: funcion '{nombre_func}' no declarada")
 

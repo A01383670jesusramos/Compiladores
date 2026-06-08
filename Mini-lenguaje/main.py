@@ -20,8 +20,10 @@ def main():
             mem.escribir_cte(dir, valor)
         print(mem.memoria["cte"])
         mv = MaquinaVirtual(traductor.gen.cuadruplos.obtener_todos(), mem, directorio.funciones)
+        for valor, dir_cte in tabla_vars.dir_cte.items():
+            mem.memoria["cte"][dir_cte] = valor
         mv.ejecutar()
-        print("RETORNO = ", mv.valor_retorno)
+        print("RETURN = ", mv.valor_retorno)
         #print(tabla_vars.dir_cte)
         print("\n")
 

@@ -186,14 +186,10 @@ class Traductor:
         else:
             dir_var = self.tabla_vars.nueva_var_g(id_var)
         self.gen.cuadruplos.agregar('=', dir_result, None, dir_var)
-
-    # def traduc_call(self, nom_func, args):
-    #     # Traducir llamada a funcion
-
-    #     for i, arg in enumerate(args):
-    #         self.gen.cuadruplos.agregar('PARAM', arg, None, None)
-        
-    #     self.gen.cuadruplos.agregar('call', nom_func, None, None)
+        self.gen.operandos.limpiar()
+        self.gen.operandos_direcciones.limpiar()
+        self.gen.tipos.limpiar()
+        self.gen.operadores.limpiar()
 
     def traduc_print(self, exp):
         # Traducir print
@@ -279,6 +275,8 @@ class Traductor:
         info = self.directorio.buscar(nom_func)
         inicio_func = info['inicio'] if info else None
         self.gen.cuadruplos.agregar('GOSUB', nom_func, None, inicio_func)
+        if info['tipo_return'] != 'void':
+            return info['dir_ret']
     
     def traduc_return(self, dir_result=None):
         # Traducir return

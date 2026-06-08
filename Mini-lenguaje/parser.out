@@ -7,8 +7,6 @@ Unused terminals:
     CORCH_A
     CORCH_C
     FUNC
-    LLAVE_A
-    LLAVE_C
 
 Grammar
 
@@ -42,13 +40,13 @@ Rule 26    estatuto -> call
 Rule 27    estatuto -> print
 Rule 28    estatuto -> retorno
 Rule 29    asigna -> ID ASIGNA exp PUNTO_COMA
-Rule 30    condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-Rule 31    condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
+Rule 30    condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+Rule 31    condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
 Rule 32    if_condicion -> <empty>
 Rule 33    if_fin -> <empty>
 Rule 34    else_inicio -> <empty>
 Rule 35    else_fin -> <empty>
-Rule 36    ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+Rule 36    ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
 Rule 37    while_inicio -> <empty>
 Rule 38    while_condicion -> <empty>
 Rule 39    while_fin -> <empty>
@@ -104,8 +102,8 @@ ID                   : 1 6 7 8 10 12 19 20 29 40 56 57
 IF                   : 30 31
 IGUAL                : 64
 INT                  : 7 14
-LLAVE_A              : 
-LLAVE_C              : 
+LLAVE_A              : 30 31 31 36
+LLAVE_C              : 30 31 31 36
 MAS                  : 49
 MAYOR                : 67
 MAYOR_IGUAL          : 69
@@ -130,14 +128,14 @@ error                :
 Nonterminals, with rules where they appear
 
 asigna               : 23
-body                 : 1 6 7 8 21
+body                 : 1 6 7 8 21 36
 call                 : 26
 ciclo                : 25
 condicion            : 24
 else_fin             : 31
 else_inicio          : 31
 empty                : 5 11 13 17 22 45 47 51 55
-estatuto             : 21 30 31 31 36
+estatuto             : 21 30 31 31
 exp                  : 29 41 42 44 46 61 63 63
 exp_relacion         : 30 31 36
 factor               : 52 53 54 62
@@ -447,9 +445,9 @@ state 27
     (28) estatuto -> . retorno
     (70) empty -> .
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -543,15 +541,16 @@ state 35
     (28) estatuto -> . retorno
     (70) empty -> .
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
     (43) retorno -> . RETURN PUNTO_COMA
 
     END             reduce using rule 70 (empty -> .)
+    LLAVE_C         reduce using rule 70 (empty -> .)
     ID              shift and go to state 33
     IF              shift and go to state 43
     WHILE           shift and go to state 44
@@ -573,6 +572,7 @@ state 36
     (22) body -> empty .
 
     END             reduce using rule 22 (body -> empty .)
+    LLAVE_C         reduce using rule 22 (body -> empty .)
 
 
 state 37
@@ -585,7 +585,7 @@ state 37
     PRINT           reduce using rule 23 (estatuto -> asigna .)
     RETURN          reduce using rule 23 (estatuto -> asigna .)
     END             reduce using rule 23 (estatuto -> asigna .)
-    ELSE            reduce using rule 23 (estatuto -> asigna .)
+    LLAVE_C         reduce using rule 23 (estatuto -> asigna .)
 
 
 state 38
@@ -598,7 +598,7 @@ state 38
     PRINT           reduce using rule 24 (estatuto -> condicion .)
     RETURN          reduce using rule 24 (estatuto -> condicion .)
     END             reduce using rule 24 (estatuto -> condicion .)
-    ELSE            reduce using rule 24 (estatuto -> condicion .)
+    LLAVE_C         reduce using rule 24 (estatuto -> condicion .)
 
 
 state 39
@@ -611,7 +611,7 @@ state 39
     PRINT           reduce using rule 25 (estatuto -> ciclo .)
     RETURN          reduce using rule 25 (estatuto -> ciclo .)
     END             reduce using rule 25 (estatuto -> ciclo .)
-    ELSE            reduce using rule 25 (estatuto -> ciclo .)
+    LLAVE_C         reduce using rule 25 (estatuto -> ciclo .)
 
 
 state 40
@@ -624,7 +624,7 @@ state 40
     PRINT           reduce using rule 26 (estatuto -> call .)
     RETURN          reduce using rule 26 (estatuto -> call .)
     END             reduce using rule 26 (estatuto -> call .)
-    ELSE            reduce using rule 26 (estatuto -> call .)
+    LLAVE_C         reduce using rule 26 (estatuto -> call .)
 
 
 state 41
@@ -637,7 +637,7 @@ state 41
     PRINT           reduce using rule 27 (estatuto -> print .)
     RETURN          reduce using rule 27 (estatuto -> print .)
     END             reduce using rule 27 (estatuto -> print .)
-    ELSE            reduce using rule 27 (estatuto -> print .)
+    LLAVE_C         reduce using rule 27 (estatuto -> print .)
 
 
 state 42
@@ -650,20 +650,20 @@ state 42
     PRINT           reduce using rule 28 (estatuto -> retorno .)
     RETURN          reduce using rule 28 (estatuto -> retorno .)
     END             reduce using rule 28 (estatuto -> retorno .)
-    ELSE            reduce using rule 28 (estatuto -> retorno .)
+    LLAVE_C         reduce using rule 28 (estatuto -> retorno .)
 
 
 state 43
 
-    (30) condicion -> IF . PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> IF . PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
+    (30) condicion -> IF . PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> IF . PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
 
     PARENT_A        shift and go to state 55
 
 
 state 44
 
-    (36) ciclo -> WHILE . while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (36) ciclo -> WHILE . while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (37) while_inicio -> .
 
     PARENT_A        reduce using rule 37 (while_inicio -> .)
@@ -827,12 +827,13 @@ state 54
     (21) body -> estatuto body .
 
     END             reduce using rule 21 (body -> estatuto body .)
+    LLAVE_C         reduce using rule 21 (body -> estatuto body .)
 
 
 state 55
 
-    (30) condicion -> IF PARENT_A . exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> IF PARENT_A . exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
+    (30) condicion -> IF PARENT_A . exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A . exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
     (63) exp_relacion -> . exp op_relacion exp
     (48) exp -> . termino sig_exp
     (52) termino -> . factor sig_termino
@@ -858,7 +859,7 @@ state 55
 
 state 56
 
-    (36) ciclo -> WHILE while_inicio . PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (36) ciclo -> WHILE while_inicio . PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
 
     PARENT_A        shift and go to state 79
 
@@ -904,7 +905,7 @@ state 59
     PRINT           reduce using rule 43 (retorno -> RETURN PUNTO_COMA .)
     RETURN          reduce using rule 43 (retorno -> RETURN PUNTO_COMA .)
     END             reduce using rule 43 (retorno -> RETURN PUNTO_COMA .)
-    ELSE            reduce using rule 43 (retorno -> RETURN PUNTO_COMA .)
+    LLAVE_C         reduce using rule 43 (retorno -> RETURN PUNTO_COMA .)
 
 
 state 60
@@ -1148,8 +1149,8 @@ state 76
 
 state 77
 
-    (30) condicion -> IF PARENT_A exp_relacion . PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> IF PARENT_A exp_relacion . PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
+    (30) condicion -> IF PARENT_A exp_relacion . PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A exp_relacion . PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
 
     PARENT_C        shift and go to state 102
 
@@ -1175,7 +1176,7 @@ state 78
 
 state 79
 
-    (36) ciclo -> WHILE while_inicio PARENT_A . exp_relacion PARENT_C while_condicion estatuto while_fin
+    (36) ciclo -> WHILE while_inicio PARENT_A . exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (63) exp_relacion -> . exp op_relacion exp
     (48) exp -> . termino sig_exp
     (52) termino -> . factor sig_termino
@@ -1216,7 +1217,7 @@ state 81
     PRINT           reduce using rule 42 (retorno -> RETURN exp PUNTO_COMA .)
     RETURN          reduce using rule 42 (retorno -> RETURN exp PUNTO_COMA .)
     END             reduce using rule 42 (retorno -> RETURN exp PUNTO_COMA .)
-    ELSE            reduce using rule 42 (retorno -> RETURN exp PUNTO_COMA .)
+    LLAVE_C         reduce using rule 42 (retorno -> RETURN exp PUNTO_COMA .)
 
 
 state 82
@@ -1491,7 +1492,7 @@ state 97
     PRINT           reduce using rule 29 (asigna -> ID ASIGNA exp PUNTO_COMA .)
     RETURN          reduce using rule 29 (asigna -> ID ASIGNA exp PUNTO_COMA .)
     END             reduce using rule 29 (asigna -> ID ASIGNA exp PUNTO_COMA .)
-    ELSE            reduce using rule 29 (asigna -> ID ASIGNA exp PUNTO_COMA .)
+    LLAVE_C         reduce using rule 29 (asigna -> ID ASIGNA exp PUNTO_COMA .)
 
 
 state 98
@@ -1541,15 +1542,11 @@ state 101
 
 state 102
 
-    (30) condicion -> IF PARENT_A exp_relacion PARENT_C . if_condicion estatuto if_fin
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C . if_condicion estatuto ELSE else_inicio estatuto else_fin
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C . if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C . if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
     (32) if_condicion -> .
 
-    ID              reduce using rule 32 (if_condicion -> .)
-    IF              reduce using rule 32 (if_condicion -> .)
-    WHILE           reduce using rule 32 (if_condicion -> .)
-    PRINT           reduce using rule 32 (if_condicion -> .)
-    RETURN          reduce using rule 32 (if_condicion -> .)
+    LLAVE_A         reduce using rule 32 (if_condicion -> .)
 
     if_condicion                   shift and go to state 126
 
@@ -1651,7 +1648,7 @@ state 109
 
 state 110
 
-    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion . PARENT_C while_condicion estatuto while_fin
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion . PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
 
     PARENT_C        shift and go to state 128
 
@@ -1841,7 +1838,7 @@ state 124
     PRINT           reduce using rule 40 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
     RETURN          reduce using rule 40 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
     END             reduce using rule 40 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
-    ELSE            reduce using rule 40 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
+    LLAVE_C         reduce using rule 40 (call -> ID PARENT_A lista_exp PARENT_C PUNTO_COMA .)
 
 
 state 125
@@ -1859,36 +1856,11 @@ state 125
 
 state 126
 
-    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion . estatuto if_fin
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion . estatuto ELSE else_inicio estatuto else_fin
-    (23) estatuto -> . asigna
-    (24) estatuto -> . condicion
-    (25) estatuto -> . ciclo
-    (26) estatuto -> . call
-    (27) estatuto -> . print
-    (28) estatuto -> . retorno
-    (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
-    (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
-    (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
-    (42) retorno -> . RETURN exp PUNTO_COMA
-    (43) retorno -> . RETURN PUNTO_COMA
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion . LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion . LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
 
-    ID              shift and go to state 33
-    IF              shift and go to state 43
-    WHILE           shift and go to state 44
-    PRINT           shift and go to state 45
-    RETURN          shift and go to state 46
+    LLAVE_A         shift and go to state 140
 
-    estatuto                       shift and go to state 140
-    asigna                         shift and go to state 37
-    condicion                      shift and go to state 38
-    ciclo                          shift and go to state 39
-    call                           shift and go to state 40
-    print                          shift and go to state 41
-    retorno                        shift and go to state 42
 
 state 127
 
@@ -1899,14 +1871,10 @@ state 127
 
 state 128
 
-    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C . while_condicion estatuto while_fin
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C . while_condicion LLAVE_A body LLAVE_C while_fin
     (38) while_condicion -> .
 
-    ID              reduce using rule 38 (while_condicion -> .)
-    IF              reduce using rule 38 (while_condicion -> .)
-    WHILE           reduce using rule 38 (while_condicion -> .)
-    PRINT           reduce using rule 38 (while_condicion -> .)
-    RETURN          reduce using rule 38 (while_condicion -> .)
+    LLAVE_A         reduce using rule 38 (while_condicion -> .)
 
     while_condicion                shift and go to state 141
 
@@ -1920,7 +1888,7 @@ state 129
     PRINT           reduce using rule 41 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
     RETURN          reduce using rule 41 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
     END             reduce using rule 41 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
-    ELSE            reduce using rule 41 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
+    LLAVE_C         reduce using rule 41 (print -> PRINT PARENT_A exp PARENT_C PUNTO_COMA .)
 
 
 state 130
@@ -2019,9 +1987,9 @@ state 135
     (28) estatuto -> . retorno
     (70) empty -> .
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -2064,9 +2032,9 @@ state 137
     (28) estatuto -> . retorno
     (70) empty -> .
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -2102,9 +2070,9 @@ state 138
     (28) estatuto -> . retorno
     (70) empty -> .
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -2136,26 +2104,8 @@ state 139
 
 state 140
 
-    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto . if_fin
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto . ELSE else_inicio estatuto else_fin
-    (33) if_fin -> .
-
-  ! shift/reduce conflict for ELSE resolved as shift
-    ELSE            shift and go to state 147
-    ID              reduce using rule 33 (if_fin -> .)
-    IF              reduce using rule 33 (if_fin -> .)
-    WHILE           reduce using rule 33 (if_fin -> .)
-    PRINT           reduce using rule 33 (if_fin -> .)
-    RETURN          reduce using rule 33 (if_fin -> .)
-    END             reduce using rule 33 (if_fin -> .)
-
-  ! ELSE            [ reduce using rule 33 (if_fin -> .) ]
-
-    if_fin                         shift and go to state 146
-
-state 141
-
-    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion . estatuto while_fin
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A . estatuto LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A . estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
     (23) estatuto -> . asigna
     (24) estatuto -> . condicion
     (25) estatuto -> . ciclo
@@ -2163,9 +2113,9 @@ state 141
     (27) estatuto -> . print
     (28) estatuto -> . retorno
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -2177,7 +2127,7 @@ state 141
     PRINT           shift and go to state 45
     RETURN          shift and go to state 46
 
-    estatuto                       shift and go to state 148
+    estatuto                       shift and go to state 146
     asigna                         shift and go to state 37
     condicion                      shift and go to state 38
     ciclo                          shift and go to state 39
@@ -2185,11 +2135,18 @@ state 141
     print                          shift and go to state 41
     retorno                        shift and go to state 42
 
+state 141
+
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion . LLAVE_A body LLAVE_C while_fin
+
+    LLAVE_A         shift and go to state 147
+
+
 state 142
 
     (6) func -> VOID ID inicio_func PARENT_A parametros PARENT_C vars START body . END
 
-    END             shift and go to state 149
+    END             shift and go to state 148
 
 
 state 143
@@ -2202,65 +2159,70 @@ state 143
     COMA            shift and go to state 120
     PARENT_C        reduce using rule 70 (empty -> .)
 
-    mas_parametros                 shift and go to state 150
+    mas_parametros                 shift and go to state 149
     empty                          shift and go to state 121
 
 state 144
 
     (7) func -> INT ID inicio_func PARENT_A parametros PARENT_C vars START body . END
 
-    END             shift and go to state 151
+    END             shift and go to state 150
 
 
 state 145
 
     (8) func -> FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body . END
 
-    END             shift and go to state 152
+    END             shift and go to state 151
 
 
 state 146
 
-    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto . LLAVE_C if_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto . LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
 
-    ID              reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    IF              reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    WHILE           reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    PRINT           reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    RETURN          reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    END             reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
-    ELSE            reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin .)
+    LLAVE_C         shift and go to state 152
 
 
 state 147
 
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE . else_inicio estatuto else_fin
-    (34) else_inicio -> .
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A . body LLAVE_C while_fin
+    (21) body -> . estatuto body
+    (22) body -> . empty
+    (23) estatuto -> . asigna
+    (24) estatuto -> . condicion
+    (25) estatuto -> . ciclo
+    (26) estatuto -> . call
+    (27) estatuto -> . print
+    (28) estatuto -> . retorno
+    (70) empty -> .
+    (29) asigna -> . ID ASIGNA exp PUNTO_COMA
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
+    (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
+    (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
+    (42) retorno -> . RETURN exp PUNTO_COMA
+    (43) retorno -> . RETURN PUNTO_COMA
 
-    ID              reduce using rule 34 (else_inicio -> .)
-    IF              reduce using rule 34 (else_inicio -> .)
-    WHILE           reduce using rule 34 (else_inicio -> .)
-    PRINT           reduce using rule 34 (else_inicio -> .)
-    RETURN          reduce using rule 34 (else_inicio -> .)
+    LLAVE_C         reduce using rule 70 (empty -> .)
+    ID              shift and go to state 33
+    IF              shift and go to state 43
+    WHILE           shift and go to state 44
+    PRINT           shift and go to state 45
+    RETURN          shift and go to state 46
 
-    else_inicio                    shift and go to state 153
+    body                           shift and go to state 153
+    estatuto                       shift and go to state 35
+    empty                          shift and go to state 36
+    asigna                         shift and go to state 37
+    condicion                      shift and go to state 38
+    ciclo                          shift and go to state 39
+    call                           shift and go to state 40
+    print                          shift and go to state 41
+    retorno                        shift and go to state 42
 
 state 148
-
-    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto . while_fin
-    (39) while_fin -> .
-
-    ID              reduce using rule 39 (while_fin -> .)
-    IF              reduce using rule 39 (while_fin -> .)
-    WHILE           reduce using rule 39 (while_fin -> .)
-    PRINT           reduce using rule 39 (while_fin -> .)
-    RETURN          reduce using rule 39 (while_fin -> .)
-    END             reduce using rule 39 (while_fin -> .)
-    ELSE            reduce using rule 39 (while_fin -> .)
-
-    while_fin                      shift and go to state 154
-
-state 149
 
     (6) func -> VOID ID inicio_func PARENT_A parametros PARENT_C vars START body END .
 
@@ -2270,14 +2232,14 @@ state 149
     START           reduce using rule 6 (func -> VOID ID inicio_func PARENT_A parametros PARENT_C vars START body END .)
 
 
-state 150
+state 149
 
     (12) mas_parametros -> COMA tipo ID mas_parametros .
 
     PARENT_C        reduce using rule 12 (mas_parametros -> COMA tipo ID mas_parametros .)
 
 
-state 151
+state 150
 
     (7) func -> INT ID inicio_func PARENT_A parametros PARENT_C vars START body END .
 
@@ -2287,7 +2249,7 @@ state 151
     START           reduce using rule 7 (func -> INT ID inicio_func PARENT_A parametros PARENT_C vars START body END .)
 
 
-state 152
+state 151
 
     (8) func -> FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END .
 
@@ -2297,9 +2259,90 @@ state 152
     START           reduce using rule 8 (func -> FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END .)
 
 
+state 152
+
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C . if_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C . ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (33) if_fin -> .
+
+    ELSE            shift and go to state 155
+    ID              reduce using rule 33 (if_fin -> .)
+    IF              reduce using rule 33 (if_fin -> .)
+    WHILE           reduce using rule 33 (if_fin -> .)
+    PRINT           reduce using rule 33 (if_fin -> .)
+    RETURN          reduce using rule 33 (if_fin -> .)
+    END             reduce using rule 33 (if_fin -> .)
+    LLAVE_C         reduce using rule 33 (if_fin -> .)
+
+    if_fin                         shift and go to state 154
+
 state 153
 
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio . estatuto else_fin
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body . LLAVE_C while_fin
+
+    LLAVE_C         shift and go to state 156
+
+
+state 154
+
+    (30) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .
+
+    ID              reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    IF              reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    WHILE           reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    PRINT           reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    RETURN          reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    END             reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+    LLAVE_C         reduce using rule 30 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin .)
+
+
+state 155
+
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE . else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (34) else_inicio -> .
+
+    LLAVE_A         reduce using rule 34 (else_inicio -> .)
+
+    else_inicio                    shift and go to state 157
+
+state 156
+
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C . while_fin
+    (39) while_fin -> .
+
+    ID              reduce using rule 39 (while_fin -> .)
+    IF              reduce using rule 39 (while_fin -> .)
+    WHILE           reduce using rule 39 (while_fin -> .)
+    PRINT           reduce using rule 39 (while_fin -> .)
+    RETURN          reduce using rule 39 (while_fin -> .)
+    END             reduce using rule 39 (while_fin -> .)
+    LLAVE_C         reduce using rule 39 (while_fin -> .)
+
+    while_fin                      shift and go to state 158
+
+state 157
+
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio . LLAVE_A estatuto LLAVE_C else_fin
+
+    LLAVE_A         shift and go to state 159
+
+
+state 158
+
+    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .
+
+    ID              reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    IF              reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    WHILE           reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    PRINT           reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    RETURN          reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    END             reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+    LLAVE_C         reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin .)
+
+
+state 159
+
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A . estatuto LLAVE_C else_fin
     (23) estatuto -> . asigna
     (24) estatuto -> . condicion
     (25) estatuto -> . ciclo
@@ -2307,9 +2350,9 @@ state 153
     (27) estatuto -> . print
     (28) estatuto -> . retorno
     (29) asigna -> . ID ASIGNA exp PUNTO_COMA
-    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto if_fin
-    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin
-    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin
+    (30) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
+    (31) condicion -> . IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
+    (36) ciclo -> . WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     (40) call -> . ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     (41) print -> . PRINT PARENT_A exp PARENT_C PUNTO_COMA
     (42) retorno -> . RETURN exp PUNTO_COMA
@@ -2321,7 +2364,7 @@ state 153
     PRINT           shift and go to state 45
     RETURN          shift and go to state 46
 
-    estatuto                       shift and go to state 155
+    estatuto                       shift and go to state 160
     asigna                         shift and go to state 37
     condicion                      shift and go to state 38
     ciclo                          shift and go to state 39
@@ -2329,22 +2372,16 @@ state 153
     print                          shift and go to state 41
     retorno                        shift and go to state 42
 
-state 154
+state 160
 
-    (36) ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto . LLAVE_C else_fin
 
-    ID              reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    IF              reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    WHILE           reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    PRINT           reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    RETURN          reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    END             reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
-    ELSE            reduce using rule 36 (ciclo -> WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion estatuto while_fin .)
+    LLAVE_C         shift and go to state 161
 
 
-state 155
+state 161
 
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto . else_fin
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C . else_fin
     (35) else_fin -> .
 
     ID              reduce using rule 35 (else_fin -> .)
@@ -2353,23 +2390,19 @@ state 155
     PRINT           reduce using rule 35 (else_fin -> .)
     RETURN          reduce using rule 35 (else_fin -> .)
     END             reduce using rule 35 (else_fin -> .)
-    ELSE            reduce using rule 35 (else_fin -> .)
+    LLAVE_C         reduce using rule 35 (else_fin -> .)
 
-    else_fin                       shift and go to state 156
+    else_fin                       shift and go to state 162
 
-state 156
+state 162
 
-    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .
+    (31) condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .
 
-    ID              reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    IF              reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    WHILE           reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    PRINT           reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    RETURN          reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    END             reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
-    ELSE            reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion estatuto ELSE else_inicio estatuto else_fin .)
+    ID              reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    IF              reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    WHILE           reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    PRINT           reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    RETURN          reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    END             reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
+    LLAVE_C         reduce using rule 31 (condicion -> IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin .)
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for ELSE in state 140 resolved as shift
