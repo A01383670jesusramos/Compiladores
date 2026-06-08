@@ -433,12 +433,18 @@ def p_factor(p):
         info = directorio.buscar(nombre_func)
         dir_ret = info['dir_ret'] if info else None
         if info:
+            args_esperados = info['num_parametros']
+            args_recibidos = len(args)
+            if args_esperados != args_recibidos:
+                print(f"Error: funcion '{nombre_func}' esperaba "
+                      f"{args_esperados} argumento(s) pero recibio {args_recibidos}")
+                raise SyntaxError(f"Numero incorrecto de argumentos en '{nombre_func}'")
             traductor.traduc_call(nombre_func, dirs_agrs)
             traductor.proces_operando(nombre_func, info['tipo_return'], dir_ret)
             p[0] = (nombre_func, dir_ret)
         else:
             print(f"Error: funcion '{nombre_func}' no declarada")
-
+            raise SyntaxError(f"Funcion '{nombre_func}' no declarada")
 def p_exp_relacion(p):
     '''
     exp_relacion : exp op_relacion exp
