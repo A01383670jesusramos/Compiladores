@@ -67,11 +67,12 @@ class DirectorioFunciones:
     def __init__(self):
         self.funciones = {}
 
-    def agregar(self, nombre, tipo_return, parametros):
+    def agregar(self, nombre, tipo_return, parametros, inicio=None):
         self.funciones[nombre] = {
             'tipo_return': tipo_return,
             'parametros': parametros,
-            'num_parametros': len(parametros)
+            'num_parametros': len(parametros),
+            'inicio': inicio
         }
     
     def buscar(self, nombre):
@@ -79,6 +80,10 @@ class DirectorioFunciones:
     
     def existe(self, nombre):
         return nombre in self.funciones
+    
+    def actualizar_inicio(self, nombre, inicio):
+        if nombre in self.funciones:
+            self.funciones[nombre]['inicio'] = inicio
             
 class TablaVariables:
     # Estructura: Pila de diccionarios

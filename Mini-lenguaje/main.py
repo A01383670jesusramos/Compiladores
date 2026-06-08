@@ -1,10 +1,10 @@
 import sys
 from lexico import lexico
-from parser import parser
+from parser import parser, traductor, directorio, tabla_vars
+from MV import Memoria, MaquinaVirtual
 
 def main():
     
-
     filename = sys.argv[1]
     try:
         with open(filename, 'r', encoding='utf-8') as f:
@@ -13,6 +13,16 @@ def main():
         print(f"Iniciando: {filename}")
         print("\n")
         result = parser.parse(code, lexer=lexico)
+        print("\n")
+        print("TABLA DE CONSTANTES")
+        mem = Memoria()
+        for valor, dir in tabla_vars.dir_cte.items():
+            mem.escribir_cte(dir, valor)
+        print(mem.memoria["cte"])
+        mv = MaquinaVirtual(traductor.gen.cuadruplos.obtener_todos(), mem, directorio.funciones)
+        mv.ejecutar()
+        print("RETORNO = ", mv.valor_retorno)
+        #print(tabla_vars.dir_cte)
         print("\n")
 
         if result is not None:

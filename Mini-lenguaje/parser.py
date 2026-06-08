@@ -2,6 +2,7 @@ import ply.yacc as yacc
 from lexico import tokens, lexico
 from semantica import DirectorioFunciones, TablaVariables, Generar_Codigo, CuboSemantico
 from traductor import Traductor
+from MV import Memoria, MaquinaVirtual
 
 directorio = DirectorioFunciones()
 tabla_vars = TablaVariables()
@@ -18,15 +19,13 @@ precedence = (
 
 def p_program(p):
     '''
-    programa : PROGRAM ID DOS_PUNTOS inicio_program vars func main_inicio START body END
+    programa : PROGRAM ID DOS_PUNTOS inicio_program vars lista_funcs main_inicio START body END
     '''
     print("Programa valido")
     print(f" Nombre: {p[2]}")
 
-    print("TABLA DE VARIABLES")
-    for i, ambito in enumerate(tabla_vars.pila_ambitos):
-        print(f" Ambito {i}: {ambito}")
-     
+    print("TABLA CONSTANTES")
+    print(tabla_vars.dir_cte)
     print("CUADRUPLOS")
     if len(traductor.gen.cuadruplos) == 0:
         print(" No se generaron cuadruplos")
@@ -48,26 +47,29 @@ def p_main_inicio(p):
     # Traducir inicio de main
     traductor.marcar_main()
 
+def p_lista_funcs(p):
+    '''
+    lista_funcs : func lista_funcs
+                | empty
+    '''
+    p[0] = None
+
 def p_func(p):
     '''
     func : VOID ID inicio_func PARENT_A parametros PARENT_C vars START body END
          | INT ID inicio_func PARENT_A parametros PARENT_C vars START body END
          | FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END
-         | empty
     '''
     global funcion_actual
     if len(p) > 2:
         tipo_return = p[1]
         parametros = p[5]
-        print("DEBUG dir_p =", tabla_vars.dir_p)
         info = directorio.buscar(funcion_actual)
         info['parametros'] = parametros
         info['num_parametros'] = len(parametros)
-
-        print(f" Funcion: {p[2]} tipo {p[1]}")
         traductor.finalizar_func()
         print("DIRECTORIO DE FUNCIONES:")
-        print(tabla_vars.pila_ambitos[-1])
+        print(directorio.funciones)
         tabla_vars.salida_ambito()
         funcion_actual = None
     p[0] = None
@@ -81,11 +83,9 @@ def p_inicio_func(p):
     traductor.funcion_actual = funcion_actual
     tipo_return = p[-2] # tipo de retorno (VOID, INT, FLOAT)
     directorio.agregar(funcion_actual, tipo_return, [])
+    inicio_func = traductor.iniciar_func(funcion_actual)
+    directorio.actualizar_inicio(funcion_actual, inicio_func)
     tabla_vars.entrada_ambito()
-    print("DEBUG tipo=", p[-2])
-    # directorio.agregar(funcion_actual, tipo_return, [])
-    traductor.iniciar_func(funcion_actual)
-    print(f" Debug: inicio_func:", funcion_actual)
 
 def p_parametros(p):
     '''
@@ -101,7 +101,6 @@ def p_parametros(p):
         p[0] = lista
     else:
         p[0] = []
-    print("DEBUG dir_p =", tabla_vars.dir_p)
 
 def p_mas_parametros(p):
     '''
@@ -183,7 +182,6 @@ def p_asigna(p):
     '''
     result, dir_result, tipo_exp = traductor.fin_expresion()
     traductor.traduc_asignacion(p[1], dir_result, tipo_exp)
-    print(f" Asigna: {p[1]} = {result}")
     p[0] = ('asigna', p[1], result)
 
 def p_condicion(p):
@@ -331,17 +329,10 @@ def p_retorno(p):
     retorno : RETURN exp PUNTO_COMA
             | RETURN PUNTO_COMA
     '''
-    # print("DEBUG: Procesando return...")
-    # result, dir_result, tipo_exp = traductor.fin_expresion()
-    # print(f"DEBUG: result={result}, dir_result={dir_result}, tipo={tipo_exp}")
-    # traductor.traduc_return(dir_result)
-    # print(f" Return: {result}")
-    # p[0] = ('return', result)
     if len(p) == 4:
         result, dir_result, tipo_exp = traductor.fin_expresion()
         traductor.validar_return(tipo_exp, valor=True)
         traductor.traduc_return(dir_result)
-        print(f" Return: {result}")
         p[0] = ('return', result)
     else:
         traductor.validar_return('void', valor=False)
@@ -418,14 +409,10 @@ def p_factor(p):
     if len(p) == 2:
         if p.slice[1].type == 'ID':
             nombre = p[1]
-            print(f"DEBUG: Procesando ID '{nombre}'")
             var_info = tabla_vars.buscar_var(nombre)
             tipo = var_info['tipo'] if var_info else 'int'
             # Obtener direccion virtual
-            print("DEBUG: ", nombre, "funcion =", funcion_actual)
             direccion = tabla_vars.obtener_dir_var(nombre, tabla_vars.cont_ambitos, funcion_actual)
-            print("DEBUG:", nombre, "dir =", direccion)
-            print("Debug ID =", nombre, "Dir =", direccion)
             traductor.proces_operando(nombre, tipo, direccion)
             p[0] = (nombre, direccion)
         elif p.slice[1].type == 'CTE_INT':
@@ -448,14 +435,22 @@ def p_factor(p):
         # - factor (UMENOS)
         traductor.proces_umenos()
         p[0] = ('-', p[2])
-    # if len(p) == 2:
-    #     p[0] = p[1]
-    # elif len(p) == 4 and p[1] == '(':
-    #     p[0] = p[2]
-    # elif len(p) == 3:
-    #     p[0] = ('-', p[2])
-    # elif len(p) == 5:
-    #     p[0] = ('call', p[1], p[3])
+    elif len(p) == 5:
+        nombre_func = p[1]
+        args = p[3] if p[3] else []
+        dirs_agrs = []
+        for arg in args:
+            if isinstance(arg, tuple) and len(arg) == 2:
+                dirs_agrs.append(arg[1]) # valor y direccion
+            else:
+                dirs_agrs.append(arg)
+        info = directorio.buscar(nombre_func)
+        if info:
+            traductor.traduc_call(nombre_func, dirs_agrs)
+            traductor.proces_operando(10000, info['tipo_return'], 10000)
+            p[0] = (nombre_func, 10000)
+        else:
+            print(f"Error: funcion '{nombre_func}' no declarada")
 
 def p_exp_relacion(p):
     '''

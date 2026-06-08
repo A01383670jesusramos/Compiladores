@@ -169,9 +169,6 @@ class Traductor:
                 self.gen.operandos.push(temp_nombre)
                 self.gen.operandos_direcciones.push(temp_dir)
                 self.gen.tipos.push(tipo_res)
-                print(f"Debug op = {op}\n"
-                      f"dir1 = {dir_operando1}\n"
-                      f"dir2 = {dir_operando2}")
                 self.gen.cuadruplos.agregar(op, dir_operando1, dir_operando2, temp_dir)
         
         #Resuldato final en el tope de Pila_Operandos
@@ -206,54 +203,58 @@ class Traductor:
     def traduc_if(self, dir_condicion):
         # Traducir if
         label_fin = self.nueva_etiqueta()
-        self.gen.cuadruplos.agregar('if', dir_condicion, None, label_fin)
+        self.gen.cuadruplos.agregar('IF', dir_condicion, None, label_fin)
         return label_fin
     
     def finalizar_if(self, label_fin):
         # Finalizar if
-        self.gen.cuadruplos.agregar('label', None, None, label_fin)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
 
     def traduc_else(self, dir_condicion):
         # Traducir else
         label_else = self.nueva_etiqueta()
         label_fin = self.nueva_etiqueta()
-        self.gen.cuadruplos.agregar('if', dir_condicion, None, label_else)
+        self.gen.cuadruplos.agregar('IF', dir_condicion, None, label_else)
         return label_else, label_fin
     
     def salto(self, label_else, label_fin):
         # Manejar saltos
         # Salto al final
-        self.gen.cuadruplos.agregar('goto', None, None, label_fin)
+        self.gen.cuadruplos.agregar('GOTO', None, None, label_fin)
         # Salto a else
-        self.gen.cuadruplos.agregar('label', None, None, label_else)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label_else)
 
     def finalizar_else(self, label_fin):
         # Finalizar else
-        self.gen.cuadruplos.agregar('label', None, None, label_fin)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
 
     def traduc_while_inicio(self):
         # Traducir inicio de while
         label_inicio = self.nueva_etiqueta()
         label_fin = self.nueva_etiqueta()
-        self.gen.cuadruplos.agregar('label', None, None, label_inicio)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label_inicio)
         return label_inicio, label_fin
     
     def traduc_while_condicion(self, dir_condicion, label_inicio, label_fin):
         # Traducir condición de while
-        self.gen.cuadruplos.agregar('if', dir_condicion, None, label_fin)
+        self.gen.cuadruplos.agregar('IF', dir_condicion, None, label_fin)
 
     def finalizar_while(self, label_inicio, label_fin):
         # Finalizar while
-        self.gen.cuadruplos.agregar('goto', None, None, label_inicio)
-        self.gen.cuadruplos.agregar('label', None, None, label_fin)
+        self.gen.cuadruplos.agregar('GOTO', None, None, label_inicio)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
 
     def iniciar_func(self, nombre):
         # Iniciar traduccion de funcion
+        inicio_funcion = len(self.gen.cuadruplos)
+
         label = self.nueva_etiqueta_funcion(nombre)
-        self.gen.cuadruplos.agregar('label', None, None, label)
+        self.gen.cuadruplos.agregar('LABEL', None, None, label)
 
         self.funcion_actual = nombre
         self.retorno = False
+
+        return inicio_funcion
     
     def finalizar_func(self):
         # Finalizar traduccion de funcion
@@ -275,15 +276,17 @@ class Traductor:
             self.gen.cuadruplos.agregar('PARAM', arg_dir, None, num_param)
             num_param += 1
 
-        self.gen.cuadruplos.agregar('GOSUB', nom_func, None, None)
+        info = self.directorio.buscar(nom_func)
+        inicio_func = info['inicio'] if info else None
+        self.gen.cuadruplos.agregar('GOSUB', nom_func, None, inicio_func)
     
     def traduc_return(self, dir_result=None):
         # Traducir return
         self.retorno = True
         if dir_result is not None:
-            self.gen.cuadruplos.agregar('return', dir_result, None, None)
+            self.gen.cuadruplos.agregar('RETURN', dir_result, None, None)
         else:
-            self.gen.cuadruplos.agregar('return', None, None, None)
+            self.gen.cuadruplos.agregar('RETURN', None, None, None)
     
     def validar_return(self, tipo_exp, valor):
         # Validar tipo de return

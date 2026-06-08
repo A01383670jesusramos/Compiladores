@@ -3,7 +3,7 @@ program test:
     int suma(int a, int b)
 
     start
-        return a+b;
+        return a + b;
     end
 
     start

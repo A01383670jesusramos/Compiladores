@@ -43,16 +43,16 @@ def test_funcion_suma():
     mem.push_frame()
 
     vm = MaquinaVirtual([], mem)
-    vm.escribir(6000, 5)  # parametro 1
-    vm.escribir(6001, 10) # parametro 2
+    vm.escribir(2000, 5)  # parametro 1
+    vm.escribir(2001, 10) # parametro 2
 
     cuadruplos = [
         ('ERA', 'suma', None, None),
-        ('PARAM', 6000, None, 1),
-        ('PARAM', 6001, None, 2),
-        ('GOSUB', 'suma', None, 5),
-        ('=', 8999, None, 2000),
-        ('ENDF', None, None, None),
+        ('PARAM', 2000, None, 1),
+        ('PARAM', 2001, None, 2),
+        ('GOSUB', 'suma', None, 6),
+        ('=', 8999, None, 2002),
+        ('GOTO', None, None, 9),
         ('+', 6000, 6001, 8000),  
         ('RETURN', 8000, None, None),
         ('ENDF', None, None, None)
@@ -61,7 +61,7 @@ def test_funcion_suma():
     vm.cuadruplos = cuadruplos
     vm.ejecutar()
 
-    resultado = vm.leer(2000)
+    resultado = vm.leer(2002)
     print("TEST FUNCION SUMA OK")
     print(f"Resultado = {resultado}")
     print()

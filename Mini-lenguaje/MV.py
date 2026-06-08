@@ -38,6 +38,8 @@ class Memoria:
             return "param"
         elif dir >= 8000:
             return "temp"
+        elif dir == 10000:
+            return self.valor_retorno 
     
     def leer_cte(self, dir):
         return self.memoria["cte"].get(dir, 0)
@@ -47,17 +49,19 @@ class Memoria:
     
 
 class MaquinaVirtual:
-    def __init__(self, cuadruplos,memoria):
+    def __init__(self, cuadruplos, memoria, directorio_funciones):
         self.cuadruplos = cuadruplos
         self.memoria = memoria
+        self.directorio_funciones = directorio_funciones
         self.ip = 0  # pointer de instruccion
         self.pila_retornos = []  # pila para manejar direcciones de retorno
+        self.valor_retorno = None
+        self.dir_retorno = 10000  # Dirección especial para retorno de funciones
 
     def leer(self, dir):
         #return self.memoria.memoria.get(dir, 0)
-        if isinstance(dir, int) and dir < 100:
-            return dir
-        
+        if dir == 10000:
+            return self.valor_retorno
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -76,9 +80,12 @@ class MaquinaVirtual:
         elif seg == "param":
             if frame:
                 return frame["param"].get(dir, 0)
-            return 0
     
     def escribir(self, dir, valor):
+        if dir == 10000:
+            self.valor_retorno = valor
+            return
+        
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -103,11 +110,13 @@ class MaquinaVirtual:
         else:
             valor = self.leer(arg1)
         self.escribir(result, valor)
+        print(f"ASIGNA: {result} = {valor}")
     
     # OPERACIONES ARITMETICAS
     def ejecutar_suma(self, arg1, arg2, result):
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
+        print(f"SUMA: {valor1} + {valor2}")
         self.escribir(result, valor1 + valor2)
 
     def ejecutar_resta(self, arg1, arg2, result):
@@ -166,25 +175,35 @@ class MaquinaVirtual:
     
     def ejecutar_param(self, arg1, result):
         frame = self.memoria.frame_actual()
-        if frame:
-            valor = self.leer(arg1)
-            frame["param"][result] = valor
-    
+        valor = self.leer(arg1)
+        print(f"PARAM {result}: valor = {valor}")
+        dir_param = 6000 + (result - 1)  # Asumimos que los parametros se almacenan a partir de 6000
+        frame["param"][dir_param] = valor
+
     def ejecutar_gosub(self, nombre_func, arg1, result):
         self.pila_retornos.append(self.ip + 1)
-        self.ip = result
+        self.ip = result - 1
     
     def ejecutar_return(self, arg1, arg2, result):
         if arg1 is not None:
             valor = self.leer(arg1)
-            self.escribir(8999, valor)
+
+            self.valor_retorno = valor
+            self.escribir(10000, valor)
+            print("RETURN:", valor)
+            print("DIR 10000 =", self.leer(10000))
         
         self.memoria.pop_frame()
 
         if self.pila_retornos:
-            self.ip = self.pila_retornos.pop()
+            self.ip = self.pila_retornos.pop() - 1
         else:
             self.ip = len(self.cuadruplos)  # Terminar ejecucion
+    
+    def ejecutar_endf(self):
+        self.memoria.pop_frame()
+        if self.pila_retornos:
+            self.ip = self.pila_retornos.pop() - 1
     
     # CONTROL DE FLUJO
     def ejecutar_goto(self, arg1, arg2, result):
@@ -203,6 +222,7 @@ class MaquinaVirtual:
         while self.ip < len(self.cuadruplos):
             operador, arg1, arg2, result = self.cuadruplos[self.ip]
 
+            print(f"IP = {self.ip} -> {(operador,arg1,arg2,result)}")
             # OPERACIONES ARITMETICAS
             if operador == '+':
                 self.ejecutar_suma(arg1, arg2, result)
@@ -249,7 +269,7 @@ class MaquinaVirtual:
             elif operador == 'RETURN':
                 self.ejecutar_return(arg1, arg2, result)
             elif operador == 'ENDF':
-                pass
+                self.ejecutar_endf()
 
             elif operador == 'PRINT':
                 valor = self.leer(arg1)
