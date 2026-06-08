@@ -180,6 +180,7 @@ class Traductor:
     
 
     def traduc_asignacion(self, id_var, dir_result, tipo_exp):
+        # Genera código para una asignación de expresión a variable
         var_info = self.tabla_vars.buscar_var(id_var)
         if var_info and 'direccion' in var_info:
             dir_var = var_info['direccion']

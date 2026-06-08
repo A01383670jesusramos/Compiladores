@@ -68,6 +68,7 @@ class DirectorioFunciones:
         self.funciones = {}
 
     def agregar(self, nombre, tipo_return, parametros, inicio=None, dir_ret=None):
+        # Registrar nueva funcion
         self.funciones[nombre] = {
             'tipo_return': tipo_return,
             'parametros': parametros,
@@ -77,12 +78,15 @@ class DirectorioFunciones:
         }
     
     def buscar(self, nombre):
+        # Busca y retorna funcion
         return self.funciones.get(nombre)
     
     def existe(self, nombre):
+        # Verifica registro de funcion
         return nombre in self.funciones
     
     def actualizar_inicio(self, nombre, inicio):
+        # Actualiza la dirección de inicio de una función
         if nombre in self.funciones:
             self.funciones[nombre]['inicio'] = inicio
             
@@ -121,15 +125,18 @@ class TablaVariables:
         self.dir_temp = {}
 
     def entrada_ambito(self):
+        # Crea un nuevo ámbito (entra a una función o bloque)
         self.cont_ambitos += 1
         self.pila_ambitos.append({})
     
     def salida_ambito(self):
+        # Sale de un ámbito (termina una función o bloque) y elimina sus variables
         if len(self.pila_ambitos) > 1:
             self.pila_ambitos.pop()
             self.cont_ambitos -= 1
     
     def declar_var(self, nombre, tipo, linea):
+        # Declara una nueva variable en el ámbito actual
         ambito_act = self.pila_ambitos[-1]
 
         if nombre in ambito_act:
@@ -145,6 +152,7 @@ class TablaVariables:
         return True
     
     def buscar_var(self, nombre):
+        # Busca una variable en el ámbito actual y ámbitos anteriores
         for i in range(len(self.pila_ambitos) -1, -1, -1):
             if nombre in self.pila_ambitos[i]:
                 return self.pila_ambitos[i][nombre]
@@ -187,6 +195,7 @@ class TablaVariables:
         return self.dir_p[clave]
     
     def nueva_dir_return(self):
+        # Asigna una dirección virtual para el retorno de una función
         dir_ret = self.rango_dir_retorno
         self.rango_dir_retorno += 1
         return dir_ret
@@ -239,6 +248,7 @@ class TablaVariables:
 
     # Depuracion
     def mostrar_tabla_dir(self):
+        # Imprime todas las direcciones virtuales asignadas (constantes, variables y parámetros)
         print("Tabla de Direcciones Virtuales:")
         print("Constantes:")
         if self.dir_cte:
@@ -271,6 +281,7 @@ class Pila:
     # Pila general para mejor manejo de uso para pilas de operadores, operandos y tipos
     
     def __init__(self):
+        # Inicializa pila vacía
         self.items = []
 
     def push(self, item):
@@ -365,6 +376,7 @@ class Fila_Cuadruplos:
     # Fila (Queue) para almacenar cuadruplos
 
     def __init__(self):
+        # Inicializa una fila vacía
         self.cuadruplos = []
         self.contador = 0
 
@@ -387,6 +399,7 @@ class Fila_Cuadruplos:
         return self.cuadruplos
     
     def __len__(self):
+        # Retorna la cantidad de cuadruplos en la fila
         return len(self.cuadruplos)
     
     def actualizar_result(self, indice, nuevo_result):
@@ -395,6 +408,7 @@ class Fila_Cuadruplos:
         self.cuadruplos[indice] = (operador, op1, op2, nuevo_result)
     
     def __repr__(self):
+        # Retorna todos los cuadruplos
         result = []
         for i, (opr, op1, op2, res) in enumerate(self.cuadruplos):
             result.append(f"{i}: ({opr}, {op1}, {op2}, {res})")

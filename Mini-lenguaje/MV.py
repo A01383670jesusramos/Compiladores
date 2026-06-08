@@ -13,6 +13,7 @@ class Memoria:
         self.pila_ambitos = []  # Pila para manejar ámbitos (local/temp)
 
     def push_frame(self):
+        # Crea un nuevo frame para un ambito local
         self.pila_ambitos.append({
             "local": {},
             "temp": {},
@@ -20,15 +21,18 @@ class Memoria:
         })
 
     def pop_frame(self):
+        # Elimina el frame actual y retorna al ámbito anterior (salida de función)
         if self.pila_ambitos:
             self.pila_ambitos.pop()
         return None
     
     def frame_actual(self):
+        # Retorna el frame actual de la pila de ámbitos
         if self.pila_ambitos:
             return self.pila_ambitos[-1]
 
     def obtener_segmento(self, dir):
+        # Determina a qué segmento de memoria pertenece una dirección virtual
         if 1 <= dir < 2000:
             return "cte"
         elif 2000 <= dir < 4000:
@@ -43,9 +47,11 @@ class Memoria:
             return "retorno"
 
     def leer_cte(self, dir):
+        # Lee el valor de una constante en la memoria
         return self.memoria["cte"].get(dir, 0)
     
     def escribir_cte(self, dir, valor):
+        # Escribe un valor en el segmento de constantes
         self.memoria["cte"][dir] = valor
     
 
@@ -60,6 +66,8 @@ class MaquinaVirtual:
         self.valor_retorno = None
 
     def leer(self, dir):
+        # Lee el valor almacenado en una dirección
+        # Accede al segmento correcto según la dirección
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -82,6 +90,8 @@ class MaquinaVirtual:
             return self.memoria.memoria["retorno"].get(dir, 0)
     
     def escribir(self, dir, valor):
+        # Escribe un valor en una dirección 
+        # Almacenando en el segmento correcto
         seg = self.memoria.obtener_segmento(dir)
         frame = self.memoria.frame_actual()
 
@@ -103,6 +113,7 @@ class MaquinaVirtual:
 
     # ASIGNACION
     def ejecutar_asignacion(self, arg1, result):
+        # Asigna el valor de arg1 a result
         if arg1 == 8999:
             valor = self.leer(8999)
         else:
@@ -111,22 +122,26 @@ class MaquinaVirtual:
     
     # OPERACIONES ARITMETICAS
     def ejecutar_suma(self, arg1, arg2, result):
+        # Suma result = arg1 + arg2
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         print(f"SUMA: {valor1} + {valor2}")
         self.escribir(result, valor1 + valor2)
 
     def ejecutar_resta(self, arg1, arg2, result):
+        # Resta result = arg1 - arg2
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, valor1 - valor2)
 
     def ejecutar_mult(self, arg1, arg2, result):
+        # Multiplica result = arg1 * arg2
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, valor1 * valor2)
 
     def ejecutar_div(self, arg1, arg2, result):
+        # Divide result = arg1 / arg2 (valida división por cero)
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         if valor2 != 0:
@@ -137,40 +152,48 @@ class MaquinaVirtual:
 
     # OPERACIONES RELACIONALES
     def ejecutar_mayor(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 > arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 > valor2 else 0)
     
     def ejecutar_menor(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 < arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 < valor2 else 0)
 
     def ejecutar_mayorigual(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 >= arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 >= valor2 else 0)
 
     def ejecutar_menorigual(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 <= arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 <= valor2 else 0)
 
     def ejecutar_igual(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 == arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 == valor2 else 0)
 
     def ejecutar_noigual(self, arg1, arg2, result):
+        # Realiza comparación: result = 1 si arg1 != arg2, sino 0
         valor1 = self.leer(arg1)
         valor2 = self.leer(arg2)
         self.escribir(result, 1 if valor1 != valor2 else 0)
 
     # FUNCIONES
     def ejecutar_era(self, nombre_func, arg1, result):
+        # Prepara un nuevo frame para la ejecución de una función (asigna espacio)
         self.memoria.push_frame()
     
     def ejecutar_param(self, arg1, result):
+        # Almacena un parámetro en el frame actual para pasar a la función
         frame = self.memoria.frame_actual()
         valor = self.leer(arg1)
         print(f"PARAM {result}: valor = {valor}")
@@ -178,11 +201,13 @@ class MaquinaVirtual:
         frame["param"][dir_param] = valor
 
     def ejecutar_gosub(self, nombre_func, arg1, result):
+        # Realiza un salto a la función, guardando la dirección de retorno en la pila
         self.pila_retornos.append(self.ip + 1)
         self.pila_funciones.append(nombre_func)
         self.ip = result - 1
     
     def ejecutar_return(self, arg1, arg2, result):
+        # Retorna de una función, almacena el valor de retorno y recupera el punto de llamada
         if arg1 is not None:
             valor = self.leer(arg1)
             nombre_func = self.pila_funciones[-1]
@@ -201,23 +226,28 @@ class MaquinaVirtual:
             self.ip = len(self.cuadruplos)  # Terminar ejecucion
     
     def ejecutar_endf(self):
+        # Finaliza la ejecución de una función
         self.memoria.pop_frame()
         if self.pila_retornos:
             self.ip = self.pila_retornos.pop() - 1
     
     # CONTROL DE FLUJO
     def ejecutar_goto(self, arg1, arg2, result):
+        # Realiza un salto a la etiqueta especificada
         self.ip = result - 1  # -1 porque loop suma 1 despues
     
     def ejecutar_gotof(self, arg1, arg2, result):
+        # Realiza un salto si la condición es falsa
         condicion = self.leer(arg1)
         if not condicion:
             self.ip = result - 1
     
     def ejecutar_label(self, arg1, arg2, result):
+        # Punto de referencia para saltos
         pass
 
     def resolver_label(self):
+        # Convierte etiquetas (nombres) en direcciones de cuadruplos
         mapa = {}
         for i, (op, arg1, arg2, res) in enumerate(self.cuadruplos):
             if op == 'LABEL' and isinstance(res, str):
@@ -233,6 +263,7 @@ class MaquinaVirtual:
     
     # EJECUCION PRINCIPAL
     def ejecutar(self):
+        # Ejecuta todos los cuadruplos en orden, interpretando cada instrucción
         self.resolver_label()
         while self.ip < len(self.cuadruplos):
             operador, arg1, arg2, result = self.cuadruplos[self.ip]

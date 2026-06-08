@@ -21,6 +21,7 @@ def p_program(p):
     '''
     programa : PROGRAM ID DOS_PUNTOS inicio_program vars lista_funcs main_inicio START body END
     '''
+    # Define la estructura general de un programa con nombre, variables, funciones y cuerpo principal
     print("Programa valido")
     print(f" Nombre: {p[2]}")
 
@@ -38,12 +39,14 @@ def p_inicio_program(p):
     '''
     inicio_program :
     '''
+    # Inicializa el programa principal
     traductor.iniciar_main()
 
 def p_main_inicio(p):
     '''
     main_inicio :
     '''
+    # Marca el inicio de la función main
     # Traducir inicio de main
     traductor.marcar_main()
 
@@ -52,6 +55,7 @@ def p_lista_funcs(p):
     lista_funcs : func lista_funcs
                 | empty
     '''
+    # Agrupa una o más funciones o ninguna
     p[0] = None
 
 def p_func(p):
@@ -60,6 +64,7 @@ def p_func(p):
          | INT ID inicio_func PARENT_A parametros PARENT_C vars START body END 
          | FLOAT ID inicio_func PARENT_A parametros PARENT_C vars START body END
     '''
+    # Declara una función con tipo de retorno (void, int o float), parámetros y cuerpo
     global funcion_actual
     if len(p) > 2:
         tipo_return = p[1]
@@ -78,6 +83,7 @@ def p_inicio_func(p):
     '''
     inicio_func :
     '''
+    # Inicializa la tabla de símbolos y contexto de una función
     global funcion_actual
     funcion_actual = p[-1] # ID funcion
     traductor.funcion_actual = funcion_actual
@@ -95,6 +101,7 @@ def p_parametros(p):
     parametros : tipo ID mas_parametros
                | empty
     '''
+    # Define los parámetros formales de una función
     if len(p) == 4:
         lista = [(p[2], p[1])] + (p[3] if p[3] else [])
         for nom_param, tipo_param in lista:
@@ -110,6 +117,7 @@ def p_mas_parametros(p):
     mas_parametros : COMA tipo ID mas_parametros
                    | empty
     '''
+    # Agrega parámetros adicionales separados por comas
     if len(p) == 5:
         p[0] = [(p[3], p[2])] + (p[4] if p[4] else [])
     else:
@@ -120,6 +128,7 @@ def p_tipo(p):
     tipo : INT
          | FLOAT
     '''
+    # Especifica un tipo de dato (entero o flotante)
     p[0] = p[1]
 
 def p_vars(p):
@@ -127,12 +136,14 @@ def p_vars(p):
     vars : var vars
          | empty
     '''
+    # Agrupa una o más declaraciones de variables
     p[0] = None
 
 def p_var(p):
     '''
     var : VAR tipo lista_id PUNTO_COMA
     '''
+    # Declara variables de un tipo específico
     tipo_var = p[2]
     for nombre in p[3]:
         #tabla_vars.declar_var(nombre, tipo_var, p.lineno(1))
@@ -151,6 +162,7 @@ def p_lista_id(p):
     lista_id : ID
              | ID COMA lista_id
     '''
+    # Lista de identificadores separados por comas
     if len(p) == 2:
         p[0] = [p[1]]
     else:
@@ -161,6 +173,7 @@ def p_body(p):
     body : estatuto body
          | empty
     '''
+    # Define el cuerpo de código como una secuencia de estatutos
     p[0] = None
 
 def p_estatuto(p):
@@ -172,6 +185,7 @@ def p_estatuto(p):
              | print
              | retorno
     '''
+    # Representa un estatuto (asignación, condicional, ciclo, llamada, impresión o retorno)
     if p[1] is not None:
         p[0] = p[1]
     else:
@@ -181,6 +195,7 @@ def p_asigna(p):
     '''
     asigna : ID ASIGNA exp PUNTO_COMA
     '''
+    # Asigna el resultado de una expresión a una variable
     result, dir_result, tipo_exp = traductor.fin_expresion()
     traductor.traduc_asignacion(p[1], dir_result, tipo_exp)
     p[0] = ('asigna', p[1], result)
@@ -190,6 +205,7 @@ def p_condicion(p):
     condicion : IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C if_fin
               | IF PARENT_A exp_relacion PARENT_C if_condicion LLAVE_A estatuto LLAVE_C ELSE else_inicio LLAVE_A estatuto LLAVE_C else_fin
     '''
+    # Maneja condicionales if-else con expresiones relacionales
     result = p[3][0]  # resultado de la condicion
     dir_result = p[3][1]  # direccion del resultado
     tipo_exp = p[3][2]  # tipo del resultado
@@ -203,6 +219,7 @@ def p_if_condicion(p):
     '''
     if_condicion :
     '''
+    # Genera código para evaluar la condición del if
     # Se evalua la exp_relacion
     _, dir_result, _, = p[-2] # exp_relacion contiene el resultado, su direccion y tipo
     label_fin = traductor.nueva_etiqueta()
@@ -214,6 +231,7 @@ def p_if_fin(p):
     '''
     if_fin :
     '''
+    # Genera la etiqueta de salida del if
     # Fin del cuerpo de la condicional. Se saca el salto de la pila
     label_fin = traductor.gen.saltos.pop()
     traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
@@ -222,6 +240,7 @@ def p_else_inicio(p):
     '''
     else_inicio :
     '''
+    # Genera código para el salto al else
     # Se crea la etiqueta para el salto del else
     label_else = traductor.gen.saltos.pop()
     label_fin = traductor.nueva_etiqueta()
@@ -233,6 +252,7 @@ def p_else_fin(p):
     '''
     else_fin :
     '''
+    # Genera la etiqueta de salida del else
     # Fin del cuerpo del else. Se saca el salto de la pila
     label_fin = traductor.gen.saltos.pop()
     traductor.gen.cuadruplos.agregar('LABEL', None, None, label_fin)
@@ -241,12 +261,14 @@ def p_ciclo(p):
     '''
     ciclo : WHILE while_inicio PARENT_A exp_relacion PARENT_C while_condicion LLAVE_A body LLAVE_C while_fin
     '''
+    # Maneja ciclos while con condición de parada
     print(f" While: condicion {p[4][0]}")
 
 def p_while_inicio(p):
     '''
     while_inicio : 
     '''
+    # Genera la etiqueta de inicio del while
     # Crear etiqueta de inicio
     label_inicio = traductor.nueva_etiqueta()
     traductor.gen.cuadruplos.agregar('LABEL', None, None, label_inicio)
@@ -256,6 +278,7 @@ def p_while_condicion(p):
     '''
     while_condicion :
     '''
+    # Genera código para evaluar la condición del while
     # Se evalua la exp_relacion
     _, dir_result, _, = p[-2] # exp_relacion contiene el resultado, su direccion y tipo
     label_fin = traductor.nueva_etiqueta()
@@ -267,6 +290,7 @@ def p_while_fin(p):
     '''
     while_fin :
     '''
+    # Genera salto de vuelta al inicio y etiqueta de salida del while
     # Fin del cuerpo de la condicional. Se sacan los saltos de la pila
     label_fin = traductor.gen.saltos.pop()
     label_inicio = traductor.gen.saltos.pop()
@@ -277,6 +301,7 @@ def p_call(p):
     '''
     call : ID PARENT_A lista_exp PARENT_C PUNTO_COMA
     '''
+    # Maneja la llamada a una función con argumentos
     nombre_func = p[1]
     args = p[3] if p[3] else []
 
@@ -305,6 +330,7 @@ def p_print(p):
     '''
     print : PRINT PARENT_A exp PARENT_C PUNTO_COMA
     '''
+    # Genera código para imprimir el resultado de una expresión
     result, dir_result, tipo_exp = traductor.fin_expresion()
     traductor.gen.cuadruplos.agregar('print', dir_result, None, None)
     print(f" Print: {result}")
@@ -315,6 +341,7 @@ def p_retorno(p):
     retorno : RETURN exp PUNTO_COMA
             | RETURN PUNTO_COMA
     '''
+    # Maneja retorno de función con o sin valor
     if len(p) == 4:
         result, dir_result, tipo_exp = traductor.fin_expresion()
         traductor.validar_return(tipo_exp, valor=True)
@@ -331,6 +358,7 @@ def p_lista_exp(p):
     lista_exp : exp mas_exp
               | empty
     '''
+    # Lista de expresiones
     if len(p) == 3:
         p[0] = [p[1]] + (p[2] if p[2] else [])
     else:
@@ -341,6 +369,7 @@ def p_mas_exp(p):
     mas_exp : COMA exp mas_exp
             | empty
     '''
+    # Agrega expresiones adicionales a la lista
     if len(p) == 4:
         p[0] = [p[2]] + (p[3] if p[3] else [])
     else:
@@ -350,6 +379,7 @@ def p_exp(p):
     '''
     exp : termino sig_exp
     '''
+    # Define una expresión aritmética con suma y resta
     p[0] = p[1]
 
 def p_sig_exp(p):
@@ -358,6 +388,7 @@ def p_sig_exp(p):
             | MENOS termino sig_exp
             | empty
     '''
+    # Continúa la expresión con operaciones de suma o resta
     if len(p) == 4:
         traductor.proces_operador(p[1])
         #p[0] = (p[1], p[2], p[3])
@@ -368,6 +399,7 @@ def p_termino(p):
     '''
     termino : factor sig_termino
     '''
+    # Define un término con multiplicación y división
     p[0] = p[1]
 
 def p_sig_termino(p):
@@ -376,6 +408,7 @@ def p_sig_termino(p):
                 | DIV factor sig_termino
                 | empty
     '''
+    # Continúa el término con operaciones de multiplicación o división
     if len(p) == 4:
         traductor.proces_operador(p[1])
         #p[0] = (p[1], p[2], p[3])
@@ -392,6 +425,7 @@ def p_factor(p):
            | PARENT_A exp PARENT_C
            | MENOS factor %prec UMENOS
     '''
+    # Define un factor (variable, constante, llamada a función, expresión o negación)
     if len(p) == 2:
         if p.slice[1].type == 'ID':
             nombre = p[1]
@@ -449,6 +483,7 @@ def p_exp_relacion(p):
     '''
     exp_relacion : exp op_relacion exp
     '''
+    # Define una expresión relacional (comparación entre expresiones)
     traductor.proces_operador(p[2])
     result, dir_result, tipo = traductor.fin_expresion()
     p[0] = (result, dir_result, tipo)
@@ -462,12 +497,14 @@ def p_op_relacion(p):
                 | MENOR_IGUAL
                 | MAYOR_IGUAL
     '''
+    # Define los operadores de relación disponibles
     p[0] = p[1]
 
 def p_empty(p):
     '''
     empty :
     '''
+    # Producción vacía para opcionalidad en la gramática
     p[0] = None
 
 def p_error(p):

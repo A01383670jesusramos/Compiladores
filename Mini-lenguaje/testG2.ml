@@ -12,4 +12,5 @@ program test:
 
     start
         x = doble(cinco());
+        print(x);
     end
