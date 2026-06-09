@@ -5,9 +5,11 @@ program test:
         x = 5;
         y = 10;
 
-        if (x < y)
+        if (x < y){
             print(x);
-        else
+        }
+        else{
             print(y);
+        }
 
     end
